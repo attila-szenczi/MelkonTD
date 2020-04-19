@@ -9,14 +9,25 @@ use amethyst::{
 
 use log::info;
 
-pub struct MyState;
+use crate::{tile_map};
 
-impl SimpleState for MyState {
+pub struct GameState;
+
+impl SimpleState for GameState {
     // On start will run when this state is initialized. For more
     // state lifecycle hooks, see:
     // https://book.amethyst.rs/stable/concepts/state.html#life-cycle
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
+
+        {
+            let fetched = world.try_fetch_mut::<tile_map::TileMap>();
+            if let Some(mut fetched_resource) = fetched {
+                fetched_resource.tiles[2] = 1;
+            } else {
+                println!("No TileMap present in `World`");
+            }
+        }
 
         // Get the screen dimensions so we can initialize the camera and
         // place our sprites correctly later. We'll clone this since we'll

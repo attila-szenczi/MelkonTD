@@ -96,14 +96,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "amethyst-starter-2d"
-version = "0.1.0"
-dependencies = [
- "amethyst 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "amethyst_animation"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1682,6 +1674,14 @@ version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "rawpointer 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "melkon_td"
+version = "0.1.0"
+dependencies = [
+ "amethyst 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

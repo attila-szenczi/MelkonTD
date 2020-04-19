@@ -13,7 +13,9 @@ use std::time::Duration;
 
 use amethyst::core::frame_limiter::FrameRateLimitStrategy;
 
-mod state;
+mod tile_map;
+mod game_state;
+mod loading_state;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -34,8 +36,7 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderFlat2D::default()),
         )?;
 
-    //let mut game = Application::new(resources, state::MyState, game_data)?;
-    let mut game = Application::build(resources, state::MyState)?.with_frame_limit(
+    let mut game = Application::build(resources, loading_state::LoadingState)?.with_frame_limit(
         FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
         25,
     )

@@ -5,7 +5,7 @@ use amethyst::{
 
 use log::info;
 
-use crate::{tile_map, game_state};
+use crate::{game_state, tile_map};
 
 pub struct LoadingState;
 
@@ -16,11 +16,15 @@ impl SimpleState for LoadingState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
 
-        let tile_map = tile_map::TileMap{
-                tiles: vec![0, 1, 0, 0, 1, 0, 0, 1, 0],
-                rows : 3,
-                columns: 3,
-            };
+        let tile_map = tile_map::TileMap {
+            tiles: vec![
+                0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+                0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0,
+            ],
+            rows: 10,
+            columns: 5,
+            entities: Vec::new(),
+        };
 
         world.insert(tile_map);
     }

@@ -1,6 +1,7 @@
 use amethyst::{
     assets::{AssetStorage, Loader},
     core::transform::Transform,
+    ecs::prelude::Entity,
     input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
@@ -9,7 +10,7 @@ use amethyst::{
 
 use log::info;
 
-use crate::{tile_map};
+use crate::tile_map;
 
 pub struct GameState;
 
@@ -21,12 +22,7 @@ impl SimpleState for GameState {
         let world = data.world;
 
         {
-            let fetched = world.try_fetch_mut::<tile_map::TileMap>();
-            if let Some(mut fetched_resource) = fetched {
-                fetched_resource.tiles[2] = 1;
-            } else {
-                println!("No TileMap present in `World`");
-            }
+            //let fetched = world.read_resource::<tile_map::TileMap>();
         }
 
         // Get the screen dimensions so we can initialize the camera and
@@ -89,7 +85,7 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         let loader = world.read_resource::<Loader>();
         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
         loader.load(
-            "sprites/logo.png",
+            "sprites/tiles.png",
             ImageFormat::default(),
             (),
             &texture_storage,
@@ -102,7 +98,7 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         let loader = world.read_resource::<Loader>();
         let sheet_storage = world.read_resource::<AssetStorage<SpriteSheet>>();
         loader.load(
-            "sprites/logo.ron",
+            "sprites/tiles.ron",
             SpriteSheetFormat(texture_handle),
             (),
             &sheet_storage,
@@ -112,7 +108,7 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
     // Create our sprite renders. Each will have a handle to the texture
     // that it renders from. The handle is safe to clone, since it just
     // references the asset.
-    (0..3)
+    (0..2)
         .map(|i| SpriteRender {
             sprite_sheet: sheet_handle.clone(),
             sprite_number: i,
@@ -120,22 +116,43 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         .collect()
 }
 
-fn init_sprites(world: &mut World, sprites: &[SpriteRender], dimensions: &ScreenDimensions) {
-    for (i, sprite) in sprites.iter().enumerate() {
-        // Center our sprites around the center of the window
-        let x = (i as f32 - 1.) * 100. + dimensions.width() * 0.5;
-        let y = (i as f32 - 1.) * 100. + dimensions.height() * 0.5;
-        let mut transform = Transform::default();
-        transform.set_translation_xyz(x, y, 0.);
+fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &ScreenDimensions) {
+    //TODO: Workaround to pass borrow checker. Refactor once i am not a rust novice.
+    let mut sprite_data: Vec<(u32, f32, f32)> = Vec::new();
+    {
+        let map = world.read_resource::<tile_map::TileMap>();
 
-        // Create an entity for each sprite and attach the `SpriteRender` as
-        // well as the transform. If you want to add behaviour to your sprites,
-        // you'll want to add a custom `Component` that will identify them, and a
-        // `System` that will iterate over them. See https://book.amethyst.rs/stable/concepts/system.html
-        world
-            .create_entity()
-            .with(sprite.clone())
-            .with(transform)
-            .build();
+        const TILE_MAP_START_POS_X : u32 = 300;
+        const TILE_MAP_START_POS_Y : u32 = 50;
+
+        let rows = map.rows;
+        let columns = map.columns;
+        for i in 0..rows {
+            for j in 0..columns {
+                let index = i * columns + j;
+                let sprite_index = map.tiles[index as usize];
+                let pos_x = TILE_MAP_START_POS_X + 50 * j + 25;
+                let pos_y = TILE_MAP_START_POS_Y + 50 * i + 25;
+
+                sprite_data.push((sprite_index, pos_x as f32, pos_y as f32));
+            }
+        }
     }
+
+    let mut tile_entities: Vec<Entity> = Vec::new();
+
+    for (sprite_index, pos_x, pos_y) in sprite_data {
+        let mut transform = Transform::default();
+        transform.set_translation_xyz(pos_x as f32, pos_y as f32, 0.);
+        tile_entities.push(
+            world
+                .create_entity()
+                .with(sprites[sprite_index as usize].clone())
+                .with(transform)
+                .build(),
+        );
+    }
+    
+    let mut map = world.write_resource::<tile_map::TileMap>();
+    map.entities = tile_entities;
 }

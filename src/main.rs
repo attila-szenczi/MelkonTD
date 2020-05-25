@@ -16,6 +16,9 @@ use amethyst::core::frame_limiter::FrameRateLimitStrategy;
 mod tile_map;
 mod game_state;
 mod loading_state;
+mod minion;
+mod minion_spawn_system;
+mod load_image;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -34,8 +37,8 @@ fn main() -> amethyst::Result<()> {
                         .with_clear([0.34, 0.36, 0.52, 1.0]),
                 )
                 .with_plugin(RenderFlat2D::default()),
-        )?;
-
+        )?.with_system_desc(minion_spawn_system::MinionSpawnSystemDesc, "minion_spawn_system", &[]);//?.with(minion_spawn_system::MinionSpawnSystem{ counter: 0}, "minion_spawn_system", &[]);
+       
     let mut game = Application::build(resources, loading_state::LoadingState)?.with_frame_limit(
         FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
         25,

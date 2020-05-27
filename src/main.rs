@@ -37,7 +37,7 @@ fn main() -> amethyst::Result<()> {
                         .with_clear([0.34, 0.36, 0.52, 1.0]),
                 )
                 .with_plugin(RenderFlat2D::default()),
-        )?.with_system_desc(minion_spawn_system::MinionSpawnSystemDesc, "minion_spawn_system", &[]);//?.with(minion_spawn_system::MinionSpawnSystem{ counter: 0}, "minion_spawn_system", &[]);
+        )?.with_system_desc(minion_spawn_system::MinionSpawnSystemDesc, "minion_spawn_system", &[]);
        
     let mut game = Application::build(resources, loading_state::LoadingState)?.with_frame_limit(
         FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),

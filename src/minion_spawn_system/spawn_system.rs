@@ -1,21 +1,16 @@
 use amethyst::{
-    assets::{AssetStorage, Loader},
-    core::transform::Transform,
+    assets::{AssetStorage},
     core::SystemDesc,
     derive::SystemDesc,
     ecs::{
         prelude::World,
         prelude::*,
-        prelude::{Entities, LazyUpdate, Read, System, Write},
-        world::Builder,
+        prelude::{Entities, LazyUpdate, Read, System},
     },
-    renderer::{ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
+    renderer::{SpriteRender, SpriteSheet, Texture},
 };
 
-use std::ops::DerefMut;
-
 use crate::load_image;
-use crate::minion;
 
 const _SPAWN_POINT_X: f32 = 325.;
 const _SPAWN_POINT_Y: f32 = 600.;

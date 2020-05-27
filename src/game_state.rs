@@ -1,10 +1,9 @@
 use amethyst::{
-    assets::{AssetStorage, Loader},
     core::transform::Transform,
     ecs::prelude::Entity,
     input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
-    renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
+    renderer::{Camera, SpriteRender},
     window::ScreenDimensions,
 };
 

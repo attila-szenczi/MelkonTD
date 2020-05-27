@@ -19,6 +19,7 @@ mod loading_state;
 mod minion;
 mod minion_spawn_system;
 mod load_image;
+mod z_layer;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());

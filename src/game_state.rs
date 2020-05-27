@@ -9,8 +9,7 @@ use amethyst::{
 
 use log::info;
 
-use crate::tile_map;
-use crate::load_image;
+use crate::{load_image, tile_map, z_layer};
 
 pub struct GameState;
 
@@ -79,8 +78,8 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &Scree
     {
         let map = world.read_resource::<tile_map::TileMap>();
 
-        const TILE_MAP_START_POS_X : u32 = 300;
-        const TILE_MAP_START_POS_Y : u32 = 50;
+        const TILE_MAP_START_POS_X: u32 = 300;
+        const TILE_MAP_START_POS_Y: u32 = 50;
 
         let rows = map.rows;
         let columns = map.columns;
@@ -100,7 +99,12 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &Scree
 
     for (sprite_index, pos_x, pos_y) in sprite_data {
         let mut transform = Transform::default();
-        transform.set_translation_xyz(pos_x as f32, pos_y as f32, 0.);
+        transform.set_translation_xyz(
+            pos_x as f32,
+            pos_y as f32,
+            z_layer::z_layer_to_coordinate(z_layer::ZLayer::TileMap),
+        );
+
         tile_entities.push(
             world
                 .create_entity()
@@ -109,7 +113,6 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &Scree
                 .build(),
         );
     }
-    
     let mut map = world.write_resource::<tile_map::TileMap>();
     map.entities = tile_entities;
 }

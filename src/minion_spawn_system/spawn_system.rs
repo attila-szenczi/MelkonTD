@@ -12,8 +12,7 @@ use amethyst::{
     renderer::{SpriteRender, SpriteSheet, Texture},
 };
 
-use crate::load_image;
-use crate::minion;
+use crate::{load_image, minion, z_layer};
 
 const SPAWN_POINT_X: f32 = 425.;
 const SPAWN_POINT_Y: f32 = 525.;
@@ -53,7 +52,11 @@ impl<'a> System<'a> for MinionSpawnSystem {
         if self.counter == 50 {
             print!("Spawn\n");
             let mut transform = Transform::default();
-            transform.set_translation_xyz(SPAWN_POINT_X, SPAWN_POINT_Y, 0.1);
+            transform.set_translation_xyz(
+                SPAWN_POINT_X,
+                SPAWN_POINT_Y,
+                z_layer::z_layer_to_coordinate(z_layer::ZLayer::Minion),
+            );
 
             updater
                 .create_entity(&entities)

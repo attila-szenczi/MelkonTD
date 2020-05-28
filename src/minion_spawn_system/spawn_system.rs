@@ -52,7 +52,6 @@ impl<'a> System<'a> for MinionSpawnSystem {
     fn run(&mut self, (entities, updater, _asset_storage, _sprite_sheet): Self::SystemData) {
         self.counter += 1;
 
-        print!("{0}\n", self.counter);
         if self.counter == 50 {
             print!("Spawn\n");
             let mut transform = Transform::default();

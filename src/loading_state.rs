@@ -54,7 +54,5 @@ impl SimpleState for LoadingState {
         }
 
         return Trans::Push(Box::new(GameState));
-        // Keep going
-        //Trans::None
     }
 }

@@ -88,8 +88,8 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &Scree
             for j in 0..columns {
                 let index = i * columns + j;
                 let sprite_index = map.tiles[index as usize];
-                let pos_x = map.map_rect.top_left.x + 50 * j + 25;
-                let pos_y = map.map_rect.top_left.y + 50 * i + 25;
+                let pos_x = map.map_rect.bottom_left.x + 50 * j + 25;
+                let pos_y = map.map_rect.bottom_left.y + 50 * i + 25;
 
                 sprite_data.push((sprite_index, pos_x as f32, pos_y as f32));
             }

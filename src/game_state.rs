@@ -9,7 +9,11 @@ use amethyst::{
 
 use log::info;
 
-use crate::{load_image, tile_map, z_layer};
+use crate::{
+    load_image::load_sprites,
+    tile_map::TileMap,
+    z_layer::{z_layer_to_coordinate, ZLayer},
+};
 
 pub struct GameState;
 
@@ -29,7 +33,7 @@ impl SimpleState for GameState {
         init_camera(world, &dimensions);
 
         // Load our sprites and display them
-        let sprites = load_image::load_sprites(world, "sprites/tiles", 2);
+        let sprites = load_sprites(world, "sprites/tiles", 2);
         init_sprites(world, &sprites, &dimensions);
     }
 
@@ -74,12 +78,9 @@ fn init_camera(world: &mut World, dimensions: &ScreenDimensions) {
 
 fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &ScreenDimensions) {
     //TODO: Workaround to pass borrow checker. Refactor once i am not a rust novice.
-    let mut sprite_data: Vec<(u32, f32, f32)> = Vec::new();
+    let mut sprite_data: Vec<(i32, f32, f32)> = Vec::new();
     {
-        let map = world.read_resource::<tile_map::TileMap>();
-
-        const TILE_MAP_START_POS_X: u32 = 300;
-        const TILE_MAP_START_POS_Y: u32 = 50;
+        let map = world.read_resource::<TileMap>();
 
         let rows = map.rows;
         let columns = map.columns;
@@ -87,8 +88,8 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &Scree
             for j in 0..columns {
                 let index = i * columns + j;
                 let sprite_index = map.tiles[index as usize];
-                let pos_x = TILE_MAP_START_POS_X + 50 * j + 25;
-                let pos_y = TILE_MAP_START_POS_Y + 50 * i + 25;
+                let pos_x = map.map_rect.top_left.x + 50 * j + 25;
+                let pos_y = map.map_rect.top_left.y + 50 * i + 25;
 
                 sprite_data.push((sprite_index, pos_x as f32, pos_y as f32));
             }
@@ -102,7 +103,7 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &Scree
         transform.set_translation_xyz(
             pos_x as f32,
             pos_y as f32,
-            z_layer::z_layer_to_coordinate(z_layer::ZLayer::TileMap),
+            z_layer_to_coordinate(ZLayer::TileMap),
         );
 
         tile_entities.push(
@@ -113,6 +114,6 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &Scree
                 .build(),
         );
     }
-    let mut map = world.write_resource::<tile_map::TileMap>();
+    let mut map = world.write_resource::<TileMap>();
     map.entities = tile_entities;
 }

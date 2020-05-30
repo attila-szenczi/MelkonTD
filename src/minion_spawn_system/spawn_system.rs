@@ -28,7 +28,7 @@ pub struct MinionSpawnSystem {
 }
 
 impl MinionSpawnSystem {
-    pub fn new(sprite_render: SpriteRender) -> MinionSpawnSystem {
+    pub fn new(sprite_render: SpriteRender) -> Self {
         MinionSpawnSystem {
             sprite_render,
             counter: 0,

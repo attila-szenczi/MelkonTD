@@ -5,7 +5,8 @@ use amethyst::{
 
 use log::info;
 
-use crate::{game_state, tile_map};
+use crate::{game_state::GameState, tile_map::TileMap};
+use utils::coord::Coord;
 
 pub struct LoadingState;
 
@@ -16,15 +17,17 @@ impl SimpleState for LoadingState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
 
-        let tile_map = tile_map::TileMap {
-            tiles: vec![
+        let tile_map = TileMap::new(
+            vec![
                 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
                 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0,
             ],
-            rows: 10,
-            columns: 5,
-            entities: Vec::new(),
-        };
+            Coord::new(300, 50),
+            10,
+            5,
+            50,
+            50,
+        );
 
         world.insert(tile_map);
     }
@@ -50,7 +53,7 @@ impl SimpleState for LoadingState {
             // https://book.amethyst.rs/stable/pong-tutorial/pong-tutorial-03.html#capturing-user-input
         }
 
-        return Trans::Push(Box::new(game_state::GameState));
+        return Trans::Push(Box::new(GameState));
         // Keep going
         //Trans::None
     }

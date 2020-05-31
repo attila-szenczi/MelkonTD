@@ -44,10 +44,6 @@ impl<'a> System<'a> for MinionSpawnSystem {
         Read<'a, AssetStorage<SpriteSheet>>,
     );
 
-    fn setup(&mut self, world: &mut World) {
-        world.register::<TestMinion>();
-    }
-
     //TODO: Remove asset storage and spritesheet somehow
     fn run(&mut self, (entities, updater, _asset_storage, _sprite_sheet): Self::SystemData) {
         self.counter += 1;

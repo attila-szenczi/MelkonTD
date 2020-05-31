@@ -15,7 +15,7 @@ type EventType = InputEvent<StringBindings>;
 
 #[derive(SystemDesc)]
 pub struct UserInputSystem {
-    pub reader_id: ReaderId<EventType>,
+    reader_id: ReaderId<EventType>,
 }
 
 impl UserInputSystem {

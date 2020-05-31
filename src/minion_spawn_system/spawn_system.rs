@@ -23,8 +23,8 @@ const SPAWN_POINT_Y: f32 = 525.;
 
 #[derive(SystemDesc)]
 pub struct MinionSpawnSystem {
-    pub sprite_render: SpriteRender,
-    pub counter: u32,
+    sprite_render: SpriteRender,
+    counter: u32,
 }
 
 impl MinionSpawnSystem {

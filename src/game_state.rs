@@ -11,7 +11,7 @@ use log::info;
 
 use crate::{
     load_image::load_sprites,
-    tile_map::TileMap,
+    tile_map::{TileMap, TileType},
     z_layer::{z_layer_to_coordinate, ZLayer},
 };
 
@@ -33,7 +33,7 @@ impl SimpleState for GameState {
         init_camera(world, &dimensions);
 
         // Load our sprites and display them
-        let sprites = load_sprites(world, "sprites/tiles", 2);
+        let sprites = load_sprites(world, "sprites/tiles", 3);
         init_sprites(world, &sprites, &dimensions);
     }
 
@@ -87,11 +87,15 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &Scree
         for i in 0..rows {
             for j in 0..columns {
                 let index = i * columns + j;
-                let sprite_index = map.tiles[index as usize];
+                let sprite_type = map.tiles[index as usize];
                 let pos_x = map.map_rect.bottom_left.x + 50 * j + 25;
                 let pos_y = map.map_rect.bottom_left.y + 50 * i + 25;
 
-                sprite_data.push((sprite_index, pos_x as f32, pos_y as f32));
+                sprite_data.push((
+                    tile_type_to_sprite_index(sprite_type),
+                    pos_x as f32,
+                    pos_y as f32,
+                ));
             }
         }
     }
@@ -116,4 +120,13 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], _dimensions: &Scree
     }
     let mut map = world.write_resource::<TileMap>();
     map.entities = tile_entities;
+}
+
+fn tile_type_to_sprite_index(tile_type: TileType) -> i32 {
+    match tile_type {
+        TileType::Unusable => 0,
+        TileType::Slot => 1,
+        TileType::Road => 2,
+        //_ => panic!("Invalid tile type at this point"),  -> for Building as long as there is no starting building
+    }
 }

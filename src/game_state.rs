@@ -127,6 +127,6 @@ fn tile_type_to_sprite_index(tile_type: TileType) -> i32 {
         TileType::Unusable => 0,
         TileType::Slot => 1,
         TileType::Road => 2,
-        //_ => panic!("Invalid tile type at this point"),  -> for Building as long as there is no starting building
+        _ => panic!("Invalid tile type at this point"),
     }
 }

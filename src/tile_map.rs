@@ -8,7 +8,7 @@ pub enum TileType {
     Unusable,
     Slot,
     Road,
-    //Building(Entity),
+    Tower(Entity),
 }
 
 pub struct TileMap {
@@ -54,8 +54,15 @@ impl TileMap {
         }
     }
 
+    pub fn occupy_slot(&mut self, index : i32, entity : Entity) {
+        match self.tiles.get(index as usize).unwrap() {
+            TileType::Slot => self.tiles[index as usize] = TileType::Tower(entity),
+            _ => panic!("Selected tile is not a slot"),
+        }
+    }
+
     //TODO: Rethink this struct
-    pub fn find_tile(&self, position_x: i32, position_y: i32) -> Option<(TileType, Rect)> {
+    pub fn find_tile(&self, position_x: i32, position_y: i32) -> Option<(i32, TileType, Rect)> {
         if position_x < self.map_rect.bottom_left.x
             || position_x > self.map_rect.bottom_left.x + self.map_rect.width
             || position_y < self.map_rect.bottom_left.y
@@ -73,6 +80,7 @@ impl TileMap {
             let row = offset_y / self.tile_height;
             let index = self.columns * row + column;
             Some((
+                index,
                 *self.tiles.get(index as usize).unwrap(),
                 Rect {
                     bottom_left: Coord {

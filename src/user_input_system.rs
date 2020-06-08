@@ -41,7 +41,7 @@ impl<'a> System<'a> for UserInputSystem {
     type SystemData = (
         Read<'a, EventChannel<EventType>>,
         Read<'a, InputHandler<StringBindings>>,
-        ReadExpect<'a, TileMap>,
+        WriteExpect<'a, TileMap>,
         Entities<'a>,
         Read<'a, LazyUpdate>,
         Read<'a, AssetStorage<Texture>>,
@@ -56,7 +56,7 @@ impl<'a> System<'a> for UserInputSystem {
         (
             channel,
             input_handler,
-            tile_map,
+            mut tile_map,
             entities,
             updater,
             _texture_storage,
@@ -81,7 +81,7 @@ impl<'a> System<'a> for UserInputSystem {
                             );
 
                             match tile_map.find_tile(world_point.x as i32, world_point.y as i32) {
-                                Some((TileType::Slot, rect)) => {
+                                Some((index, TileType::Slot, rect)) => {
                                     let mut transform = Transform::default();
                                     transform.set_translation_xyz(
                                         rect.bottom_left.x as f32,
@@ -90,11 +90,12 @@ impl<'a> System<'a> for UserInputSystem {
                                     );
 
                                     println!("Spawn tower\n");
-                                    updater
+                                    let entity = updater
                                         .create_entity(&entities)
                                         .with(self.sprite_render.clone())
                                         .with(transform)
                                         .build();
+                                    tile_map.occupy_slot(index, entity);
                                 }
                                 _ => (),
                             }

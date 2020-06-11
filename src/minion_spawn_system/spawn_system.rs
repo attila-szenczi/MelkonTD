@@ -14,7 +14,7 @@ use amethyst::{
 
 use crate::{
     load_image::load_sprites,
-    minion::TestMinion,
+    minion::Minion,
     z_layer::{z_layer_to_coordinate, ZLayer},
 };
 
@@ -61,7 +61,7 @@ impl<'a> System<'a> for MinionSpawnSystem {
                 .create_entity(&entities)
                 .with(self.sprite_render.clone())
                 .with(transform)
-                .with(TestMinion {})
+                .with(Minion::new())
                 .build();
 
             self.counter = 0;

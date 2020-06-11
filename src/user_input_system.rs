@@ -19,6 +19,7 @@ use amethyst::{
 use crate::load_image::load_sprites;
 use crate::tile_map::{TileMap, TileType};
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
+use crate::tower::Tower;
 
 type EventType = InputEvent<StringBindings>;
 
@@ -94,6 +95,7 @@ impl<'a> System<'a> for UserInputSystem {
                                         .create_entity(&entities)
                                         .with(self.sprite_render.clone())
                                         .with(transform)
+                                        .with(Tower::new())
                                         .build();
                                     tile_map.occupy_slot(index, entity);
                                 }

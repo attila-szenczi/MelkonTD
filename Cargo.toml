@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 amethyst = "0.15.0"
+if_chain = "1.0.0"
 log = { version = "0.4.8", features = ["serde"] }
 utils = {path = "utils"}
 

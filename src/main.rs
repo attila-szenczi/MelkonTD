@@ -23,6 +23,8 @@ mod minion_spawn_system;
 mod tile_map;
 mod user_input_system;
 mod z_layer;
+mod tower;
+mod tower_update_system;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -58,8 +60,14 @@ fn main() -> amethyst::Result<()> {
         .with(
             minion_move_system::MinionMoveSystem,
             "minion_move_system",
-            &[],
-        );
+            &["input_system"],
+        )
+        .with(
+            tower_update_system::TowerUpdateSystem,
+            "tower_update_system",
+            &["input_system"],
+        )
+        ;
 
     let mut game = Application::build(resources, loading_state::LoadingState)?
         .with_frame_limit(

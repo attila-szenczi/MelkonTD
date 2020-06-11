@@ -8,14 +8,14 @@ use amethyst::{
     },
 };
 
-use crate::minion::TestMinion;
+use crate::minion::Minion;
 
 #[derive(SystemDesc)]
 pub struct MinionMoveSystem;
 
 impl<'a> System<'a> for MinionMoveSystem {
     type SystemData = (
-        ReadStorage<'a, TestMinion>,
+        ReadStorage<'a, Minion>,
         WriteStorage<'a, Transform>,
         Read<'a, Time>,
     );

@@ -25,6 +25,7 @@ mod user_input_system;
 mod z_layer;
 mod tower;
 mod tower_update_system;
+mod minion_death_system;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -66,6 +67,10 @@ fn main() -> amethyst::Result<()> {
             tower_update_system::TowerUpdateSystem,
             "tower_update_system",
             &["input_system"],
+        ).with(
+            minion_death_system::MinionDeathSystem,
+            "minion_death_system",
+            &["input_system", "tower_update_system"],
         )
         ;
 

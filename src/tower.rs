@@ -49,7 +49,6 @@ impl Tower {
                 if let Some(target_minion) = minions.get_mut(entity);
                 then {
                     target_minion.hit(self.damage);
-                    //fire
                 } else {
                     //TODO: Lookup instead of entities join?
                     for (entity, minion, transform) in (entities, minions, transforms).join() {

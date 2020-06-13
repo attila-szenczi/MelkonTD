@@ -1,6 +1,7 @@
 pub enum ZLayer {
     TileMap = 0,
     Minion,
+    Projectile,
 }
 
 pub fn z_layer_to_coordinate(layer: ZLayer) -> f32 {

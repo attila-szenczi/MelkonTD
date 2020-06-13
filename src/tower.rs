@@ -1,15 +1,15 @@
 use amethyst::{
     core::math::Vector3,
     core::transform::Transform,
-    ecs::{
-        prelude::{Entity, ReadStorage, WriteStorage, Join, Entities},
-        Component, DenseVecStorage,
-    },
+    ecs::{prelude::*, Component, DenseVecStorage},
+    renderer::SpriteRender,
 };
 
 use if_chain::if_chain;
 
 use crate::minion::Minion;
+use crate::projectile::Projectile;
+use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 
 pub struct Tower {
     //TODO Boxed dyn trait object to handle firing, evolution options etc
@@ -17,6 +17,7 @@ pub struct Tower {
     pub damage: i32,
     pub firing_timer: f32,
     pub range: f32,
+    sprite_render: SpriteRender,
 }
 
 impl Component for Tower {
@@ -24,12 +25,13 @@ impl Component for Tower {
 }
 
 impl Tower {
-    pub fn new() -> Self {
+    pub fn new(sprite_render: SpriteRender) -> Self {
         Tower {
             target: None,
             damage: 10,
             firing_timer: 1.,
             range: 70.,
+            sprite_render,
         }
     }
 
@@ -37,8 +39,9 @@ impl Tower {
         &mut self,
         entities: &Entities<'a>,
         tower_transform: &Transform,
-        minions: &mut WriteStorage<'a, Minion>, //TODO: read storage once projectile's will exist
+        minions: &ReadStorage<'a, Minion>,
         transforms: &ReadStorage<'a, Transform>,
+        updater: &Read<'a, LazyUpdate>,
         elapsed: f32,
     ) {
         if self.update_timer(elapsed) {
@@ -46,15 +49,17 @@ impl Tower {
                 if let Some(entity) = self.target;
                 if let Some(target_transform) = transforms.get(entity);
                 if self.is_in_range(tower_transform.translation(), target_transform.translation());
-                if let Some(target_minion) = minions.get_mut(entity);
                 then {
-                    target_minion.hit(self.damage);
+                    self.fire(entities, updater, tower_transform.translation());
                 } else {
                     //TODO: Lookup instead of entities join?
-                    for (entity, minion, transform) in (entities, minions, transforms).join() {
-                        if self.is_in_range(tower_transform.translation(), transform.translation()) {
+                    for (entity, _minion, transform) in (entities, minions, transforms).join() {
+                        let tower_translation = tower_transform.translation();
+                        if self.is_in_range(tower_translation, transform.translation()) {
                             self.target = Some(entity);
-                            minion.hit(self.damage);
+                            self.fire(entities, updater, tower_translation);
+
+                            break;
                         }
                     }
                 }
@@ -62,14 +67,38 @@ impl Tower {
         }
     }
 
+    fn fire<'a>(
+        &mut self,
+        entities: &Entities<'a>,
+        updater: &Read<'a, LazyUpdate>,
+        tower_translation: &Vector3<f32>,
+    ) {
+        let mut transform = Transform::default();
+        transform.set_translation_xyz(
+            tower_translation.x as f32,
+            tower_translation.y as f32,
+            z_layer_to_coordinate(ZLayer::Projectile),
+        );
+        updater
+            .create_entity(&entities)
+            .with(self.sprite_render.clone())
+            .with(transform)
+            .with(Projectile::new(self.target.unwrap(), 10, 5., 150.))
+            .build();
+        self.reset_timer();
+    }
+
     fn update_timer(&mut self, elapsed: f32) -> bool {
-        self.firing_timer -= elapsed;
-        if self.firing_timer < 0. {
-            self.firing_timer += 1.;
-            true
+        if self.firing_timer > 0. {
+            self.firing_timer -= elapsed;
         } else {
-            false
+            self.firing_timer = 0.;
         }
+        self.firing_timer <= 0.
+    }
+
+    fn reset_timer(&mut self) {
+        self.firing_timer += 1.;
     }
 
     fn is_in_range(&self, lhs: &Vector3<f32>, rhs: &Vector3<f32>) -> bool {

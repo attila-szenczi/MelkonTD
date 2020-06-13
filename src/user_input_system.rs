@@ -26,14 +26,16 @@ type EventType = InputEvent<StringBindings>;
 #[derive(SystemDesc)]
 pub struct UserInputSystem {
     reader_id: ReaderId<EventType>,
-    sprite_render: SpriteRender,
+    tower_sprite_render: SpriteRender,
+    projectile_sprite_render: SpriteRender,
 }
 
 impl UserInputSystem {
-    pub fn new(reader_id: ReaderId<EventType>, sprite_render: SpriteRender) -> Self {
+    pub fn new(reader_id: ReaderId<EventType>, tower_sprite_render: SpriteRender, projectile_sprite_render: SpriteRender) -> Self {
         UserInputSystem {
             reader_id,
-            sprite_render,
+            tower_sprite_render,
+            projectile_sprite_render
         }
     }
 }
@@ -93,9 +95,9 @@ impl<'a> System<'a> for UserInputSystem {
                                     println!("Spawn tower\n");
                                     let entity = updater
                                         .create_entity(&entities)
-                                        .with(self.sprite_render.clone())
+                                        .with(self.tower_sprite_render.clone())
                                         .with(transform)
-                                        .with(Tower::new())
+                                        .with(Tower::new(self.projectile_sprite_render.clone()))
                                         .build();
                                     tile_map.occupy_slot(index, entity);
                                 }
@@ -119,7 +121,8 @@ impl<'a, 'b> SystemDesc<'a, 'b, UserInputSystem> for UserInputSystemDesc {
         let reader_id = world
             .fetch_mut::<EventChannel<EventType>>()
             .register_reader();
-        let mut sprite_renders = load_sprites(world, "sprites/tower", 1);
-        UserInputSystem::new(reader_id, sprite_renders.pop().unwrap())
+        let mut tower_sprite_renders = load_sprites(world, "sprites/tower", 1);
+        let mut projectile_sprite_renders = load_sprites(world, "sprites/projectile", 1);
+        UserInputSystem::new(reader_id, tower_sprite_renders.pop().unwrap(), projectile_sprite_renders.pop().unwrap())
     }
 }

@@ -18,14 +18,17 @@ mod game_state;
 mod load_image;
 mod loading_state;
 mod minion;
+mod minion_death_system;
 mod minion_move_system;
 mod minion_spawn_system;
+mod projectile;
+mod projectile_update_system;
 mod tile_map;
-mod user_input_system;
-mod z_layer;
 mod tower;
 mod tower_update_system;
-mod minion_death_system;
+mod user_input_system;
+mod projectile_death_system;
+mod z_layer;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -67,13 +70,22 @@ fn main() -> amethyst::Result<()> {
             tower_update_system::TowerUpdateSystem,
             "tower_update_system",
             &["input_system"],
-        ).with(
+        )
+        .with(
+            projectile_update_system::ProjectileUpdateSystem,
+            "projectile_update_system",
+            &["input_system"],
+        )
+        .with(
             minion_death_system::MinionDeathSystem,
             "minion_death_system",
-            &["input_system", "tower_update_system"],
-        )
-        ;
-
+            &["input_system", "projectile_update_system"],
+        ).with(
+            projectile_death_system::ProjectileDeathSystem,
+            "projectile_death_system",
+            &["input_system", "projectile_update_system"],
+        );
+        
     let mut game = Application::build(resources, loading_state::LoadingState)?
         .with_frame_limit(
             FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),

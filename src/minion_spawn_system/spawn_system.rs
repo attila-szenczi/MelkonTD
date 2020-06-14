@@ -1,10 +1,8 @@
 use amethyst::{
     assets::AssetStorage,
     core::transform::{Parent, Transform},
-    core::SystemDesc,
     derive::SystemDesc,
     ecs::{
-        prelude::World,
         prelude::*,
         prelude::{Entities, LazyUpdate, Read, System},
         world::Builder,
@@ -14,7 +12,6 @@ use amethyst::{
 
 use crate::{
     hierarchy_lookup::HierarchyLookup,
-    load_image::load_sprites,
     minion::Minion,
     z_layer::{z_layer_to_coordinate, ZLayer},
 };
@@ -146,26 +143,5 @@ impl<'a> System<'a> for MinionSpawnSystem {
 
             self.counter = 0;
         }
-    }
-}
-
-pub struct MinionSpawnSystemDesc;
-
-impl<'a, 'b> SystemDesc<'a, 'b, MinionSpawnSystem> for MinionSpawnSystemDesc {
-    fn build(self, world: &mut World) -> MinionSpawnSystem {
-        <MinionSpawnSystem as System<'_>>::SystemData::setup(world);
-
-        MinionSpawnSystem::new(
-            load_sprites(world, "sprites/minion", 1).pop().unwrap(),
-            load_sprites(world, "sprites/healthbar_back", 1)
-                .pop()
-                .unwrap(),
-            load_sprites(world, "sprites/healthbar_front", 1)
-                .pop()
-                .unwrap(),
-            load_sprites(world, "sprites/healthbar_outline", 1)
-                .pop()
-                .unwrap(),
-        )
     }
 }

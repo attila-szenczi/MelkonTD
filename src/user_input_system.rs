@@ -3,10 +3,8 @@ use amethyst::{
     assets::AssetStorage,
     core::math::Point3,
     core::transform::Transform,
-    core::SystemDesc,
     derive::SystemDesc,
     ecs::{
-        prelude::World,
         prelude::*,
         prelude::{Entities, LazyUpdate, Read, System},
     },
@@ -16,7 +14,6 @@ use amethyst::{
     winit::MouseButton,
 };
 
-use crate::load_image::load_sprites;
 use crate::tile_map::{TileMap, TileType};
 use crate::tower::Tower;
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
@@ -114,24 +111,5 @@ impl<'a> System<'a> for UserInputSystem {
                 _ => (),
             }
         }
-    }
-}
-
-pub struct UserInputSystemDesc;
-
-impl<'a, 'b> SystemDesc<'a, 'b, UserInputSystem> for UserInputSystemDesc {
-    fn build(self, world: &mut World) -> UserInputSystem {
-        <UserInputSystem as System<'_>>::SystemData::setup(world);
-
-        let reader_id = world
-            .fetch_mut::<EventChannel<EventType>>()
-            .register_reader();
-        let mut tower_sprite_renders = load_sprites(world, "sprites/tower", 1);
-        let mut projectile_sprite_renders = load_sprites(world, "sprites/projectile", 1);
-        UserInputSystem::new(
-            reader_id,
-            tower_sprite_renders.pop().unwrap(),
-            projectile_sprite_renders.pop().unwrap(),
-        )
     }
 }

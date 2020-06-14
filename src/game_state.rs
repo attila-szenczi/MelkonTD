@@ -1,9 +1,14 @@
 use amethyst::{
+    core::bundle::SystemBundle,
     core::transform::Transform,
-    ecs::prelude::Entity,
+    core::transform::TransformBundle,
+    core::ArcThreadPool,
+    ecs::prelude::{Dispatcher, DispatcherBuilder, Entity},
     input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
+    input::{InputBundle, InputEvent, StringBindings},
     prelude::*,
     renderer::{Camera, SpriteRender},
+    shrev::EventChannel,
     window::ScreenDimensions,
 };
 
@@ -11,30 +16,89 @@ use log::info;
 
 use crate::{
     load_image::load_sprites,
+    minion_death_system::MinionDeathSystem,
+    minion_spawn_system::MinionSpawnSystem,
+    minion_update_system::MinionUpdateSystem,
+    projectile_death_system::ProjectileDeathSystem,
+    projectile_update_system::ProjectileUpdateSystem,
+    texture_lookup::TextureLookup,
     tile_map::{TileMap, TileType},
+    tower_update_system::TowerUpdateSystem,
+    user_input_system::UserInputSystem,
     z_layer::{z_layer_to_coordinate, ZLayer},
 };
 
-pub struct GameState;
+#[derive(Default)]
+pub struct GameState<'a, 'b> {
+    dispatcher: Option<Dispatcher<'a, 'b>>,
+}
 
-impl SimpleState for GameState {
+impl<'a, 'b> GameState<'a, 'b> {
+    fn create_dispatcher(&mut self, world: &mut World) {
+        let mut dispatcher_builder = DispatcherBuilder::new();
+        let input_bundle = InputBundle::<StringBindings>::new();
+        input_bundle
+            .build(world, &mut dispatcher_builder)
+            .expect("Input boundle couldn't be added");
+        dispatcher_builder = dispatcher_builder
+            .with(
+                create_minion_spawn_system(&world),
+                "minion_spawn_system",
+                &[],
+            )
+            .with(
+                create_user_input_system(&world),
+                "user_input_system",
+                &["input_system"],
+            )
+            .with(TowerUpdateSystem, "tower_update_system", &["input_system"])
+            .with(
+                ProjectileUpdateSystem,
+                "projectile_update_system",
+                &["input_system"],
+            )
+            .with(
+                MinionUpdateSystem,
+                "minion_update_system",
+                &["input_system", "projectile_update_system"],
+            )
+            .with(
+                MinionDeathSystem,
+                "minion_death_system",
+                &["input_system", "projectile_update_system"],
+            )
+            .with(
+                ProjectileDeathSystem,
+                "projectile_death_system",
+                &["input_system", "projectile_update_system"],
+            );
+        let transform_bundle = TransformBundle::new();
+        transform_bundle
+            .build(world, &mut dispatcher_builder)
+            .expect("Transform boundle couldn't be added");
+
+        let mut dispatcher = dispatcher_builder
+            .with_pool((*world.read_resource::<ArcThreadPool>()).clone())
+            .build();
+        dispatcher.setup(world);
+
+        self.dispatcher = Some(dispatcher);
+    }
+}
+
+impl<'a, 'b> SimpleState for GameState<'a, 'b> {
     // On start will run when this state is initialized. For more
     // state lifecycle hooks, see:
     // https://book.amethyst.rs/stable/concepts/state.html#life-cycle
-    fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        let world = data.world;
+    fn on_start(&mut self, mut data: StateData<'_, GameData<'_, '_>>) {
+        self.create_dispatcher(data.world);
 
-        // Get the screen dimensions so we can initialize the camera and
-        // place our sprites correctly later. We'll clone this since we'll
-        // pass the world mutably to the following functions.
-        let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
+        let dimensions = (*data.world.read_resource::<ScreenDimensions>()).clone();
 
-        // Place the camera
-        init_camera(world, &dimensions);
+        init_camera(data.world, &dimensions);
 
-        // Load our sprites and display them
-        let sprites = load_sprites(world, "sprites/tiles", 3);
-        init_sprites(world, &sprites, &dimensions);
+        let sprites = load_sprites(data.world, "sprites/tiles", 3);
+        init_sprites(data.world, &sprites, &dimensions);
     }
 
     fn handle_event(
@@ -59,6 +123,14 @@ impl SimpleState for GameState {
         }
 
         // Keep going
+        Trans::None
+    }
+
+    fn update(&mut self, data: &mut StateData<GameData>) -> SimpleTrans {
+        if let Some(dispatcher) = self.dispatcher.as_mut() {
+            dispatcher.dispatch(&data.world);
+        }
+
         Trans::None
     }
 }
@@ -129,4 +201,28 @@ fn tile_type_to_sprite_index(tile_type: TileType) -> i32 {
         TileType::Road => 2,
         _ => panic!("Invalid tile type at this point"),
     }
+}
+
+fn create_minion_spawn_system(world: &World) -> MinionSpawnSystem {
+    let texture_lookup = world.read_resource::<TextureLookup>();
+
+    MinionSpawnSystem::new(
+        texture_lookup.get_texture("sprites/minion", 0),
+        texture_lookup.get_texture("sprites/healthbar_back", 0),
+        texture_lookup.get_texture("sprites/healthbar_front", 0),
+        texture_lookup.get_texture("sprites/healthbar_outline", 0),
+    )
+}
+
+fn create_user_input_system(world: &World) -> UserInputSystem {
+    let texture_lookup = world.read_resource::<TextureLookup>();
+
+    let reader_id = world
+        .fetch_mut::<EventChannel<InputEvent<StringBindings>>>()
+        .register_reader();
+    UserInputSystem::new(
+        reader_id,
+        texture_lookup.get_texture("sprites/tower", 0),
+        texture_lookup.get_texture("sprites/projectile", 0),
+    )
 }

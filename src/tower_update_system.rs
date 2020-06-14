@@ -11,7 +11,7 @@ use amethyst::{
 use crate::minion::Minion;
 use crate::tower::Tower;
 
-#[derive(SystemDesc)]
+#[derive(SystemDesc, Default)]
 pub struct TowerUpdateSystem;
 
 impl<'a> System<'a> for TowerUpdateSystem {

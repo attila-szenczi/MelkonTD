@@ -5,7 +5,7 @@ use amethyst::{
 
 use log::info;
 
-use crate::{game_state::GameState, tile_map::TileMap};
+use crate::{game_state::GameState, texture_lookup::TextureLookup, tile_map::TileMap};
 use utils::coord::Coord;
 
 pub struct LoadingState;
@@ -15,8 +15,6 @@ impl SimpleState for LoadingState {
     // state lifecycle hooks, see:
     // https://book.amethyst.rs/stable/concepts/state.html#life-cycle
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        let world = data.world;
-
         let tile_map = TileMap::new(
             vec![
                 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 1, 2, 1, 0, 0, 0, 2, 0, 0, 0, 1, 2, 1, 0, 0, 0, 2,
@@ -29,7 +27,9 @@ impl SimpleState for LoadingState {
             50,
         );
 
-        world.insert(tile_map);
+        data.world.insert(tile_map);
+
+        init_texture_lookup(data.world);
     }
 
     fn handle_event(
@@ -53,6 +53,19 @@ impl SimpleState for LoadingState {
             // https://book.amethyst.rs/stable/pong-tutorial/pong-tutorial-03.html#capturing-user-input
         }
 
-        return Trans::Push(Box::new(GameState));
+        return Trans::Push(Box::new(GameState::default()));
     }
+}
+
+fn init_texture_lookup(world: &mut World) {
+    let mut texture_lookup = TextureLookup::default();
+
+    texture_lookup.insert(world, "sprites/minion", 1, 50, 50);
+    texture_lookup.insert(world, "sprites/healthbar_back", 1, 32, 32);
+    texture_lookup.insert(world, "sprites/healthbar_front", 1, 32, 32);
+    texture_lookup.insert(world, "sprites/healthbar_outline", 1, 32, 32);
+    texture_lookup.insert(world, "sprites/tower", 1, 50, 50);
+    texture_lookup.insert(world, "sprites/projectile", 1, 16, 16);
+    //texture_lookup.insert(data.world, "sprites/tiles", 3, 50, 50);
+    world.insert(texture_lookup);
 }

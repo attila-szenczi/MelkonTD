@@ -60,8 +60,11 @@ impl Projectile {
                     let target_translation = target_transform.translation();
                     let projectile_translation = projectile_transform.translation();
                     //TODO: eliminate intermediate vector
-                    let mut direction = Vector2::new(target_translation.x - projectile_translation.x, target_translation.y - projectile_translation.y);
+                    let mut direction = Vector2::new(target_translation.x - projectile_translation.x,
+                                                     target_translation.y - projectile_translation.y);
                     direction.normalize();
+
+                    //TODO: Stop at target!
                     direction.x *= elapsed * self.speed;
                     direction.y *= elapsed * self.speed;
 
@@ -80,16 +83,6 @@ impl Projectile {
         let x_diff = lhs.x - rhs.x;
         let square_sum = y_diff * y_diff + x_diff * x_diff;
 
-        if square_sum.sqrt() < self.detonation_range {
-            println!(
-                "lhs: {:?} rhs: {:?}, sqrt: {:?}, detonation range: {:?}",
-                lhs,
-                rhs,
-                square_sum.sqrt(),
-                self.detonation_range
-            );
-            return true;
-        }
-        false
+        square_sum.sqrt() < self.detonation_range
     }
 }

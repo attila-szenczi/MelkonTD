@@ -1,7 +1,10 @@
 pub enum ZLayer {
     TileMap = 0,
     Minion,
+    Tower,
     Projectile,
+    HealthBarBack,
+    HealthBarFront,
 }
 
 pub fn z_layer_to_coordinate(layer: ZLayer) -> f32 {

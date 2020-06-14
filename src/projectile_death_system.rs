@@ -17,8 +17,8 @@ impl<'a> System<'a> for ProjectileDeathSystem {
     );
 
     fn run(&mut self, (entities, projectiles): Self::SystemData) {
-        for (entity, minion) in (&entities, &projectiles).join() {
-            if minion.delete {
+        for (entity, projectile) in (&entities, &projectiles).join() {
+            if projectile.delete {
                 match entities.delete(entity) {
                     Err(e) => println!("error during entity deletion: {:?}", e),
                     Ok(_v) => ()

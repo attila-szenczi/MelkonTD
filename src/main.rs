@@ -15,19 +15,20 @@ use std::time::Duration;
 use amethyst::core::frame_limiter::FrameRateLimitStrategy;
 
 mod game_state;
+mod hierarchy_lookup;
 mod load_image;
 mod loading_state;
 mod minion;
 mod minion_death_system;
-mod minion_move_system;
 mod minion_spawn_system;
+mod minion_update_system;
 mod projectile;
+mod projectile_death_system;
 mod projectile_update_system;
 mod tile_map;
 mod tower;
 mod tower_update_system;
 mod user_input_system;
-mod projectile_death_system;
 mod z_layer;
 
 fn main() -> amethyst::Result<()> {
@@ -62,11 +63,6 @@ fn main() -> amethyst::Result<()> {
             &["input_system"],
         )
         .with(
-            minion_move_system::MinionMoveSystem,
-            "minion_move_system",
-            &["input_system"],
-        )
-        .with(
             tower_update_system::TowerUpdateSystem,
             "tower_update_system",
             &["input_system"],
@@ -77,15 +73,20 @@ fn main() -> amethyst::Result<()> {
             &["input_system"],
         )
         .with(
+            minion_update_system::MinionUpdateSystem,
+            "minion_update_system",
+            &["input_system", "projectile_update_system"],
+        )
+        .with(
             minion_death_system::MinionDeathSystem,
             "minion_death_system",
             &["input_system", "projectile_update_system"],
-        ).with(
+        )
+        .with(
             projectile_death_system::ProjectileDeathSystem,
             "projectile_death_system",
             &["input_system", "projectile_update_system"],
         );
-        
     let mut game = Application::build(resources, loading_state::LoadingState)?
         .with_frame_limit(
             FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),

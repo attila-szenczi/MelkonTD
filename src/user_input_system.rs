@@ -1,11 +1,10 @@
 use amethyst::shrev::EventChannel;
 use amethyst::{
     assets::AssetStorage,
-    core::math::{Point3},
+    core::math::Point3,
     core::transform::Transform,
     core::SystemDesc,
     derive::SystemDesc,
-    window::ScreenDimensions,
     ecs::{
         prelude::World,
         prelude::*,
@@ -13,13 +12,14 @@ use amethyst::{
     },
     input::{InputEvent, InputHandler, StringBindings},
     renderer::{Camera, SpriteRender, SpriteSheet, Texture},
+    window::ScreenDimensions,
     winit::MouseButton,
 };
 
 use crate::load_image::load_sprites;
 use crate::tile_map::{TileMap, TileType};
-use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 use crate::tower::Tower;
+use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 
 type EventType = InputEvent<StringBindings>;
 
@@ -31,11 +31,15 @@ pub struct UserInputSystem {
 }
 
 impl UserInputSystem {
-    pub fn new(reader_id: ReaderId<EventType>, tower_sprite_render: SpriteRender, projectile_sprite_render: SpriteRender) -> Self {
+    pub fn new(
+        reader_id: ReaderId<EventType>,
+        tower_sprite_render: SpriteRender,
+        projectile_sprite_render: SpriteRender,
+    ) -> Self {
         UserInputSystem {
             reader_id,
             tower_sprite_render,
-            projectile_sprite_render
+            projectile_sprite_render,
         }
     }
 }
@@ -73,8 +77,9 @@ impl<'a> System<'a> for UserInputSystem {
             match event {
                 EventType::MouseButtonPressed(MouseButton::Left) => {
                     if let Some((x, y)) = input_handler.mouse_position() {
-
-                        if let Some((camera, transform)) = (&camera_storage, &transform_storage).join().next() {
+                        if let Some((camera, transform)) =
+                            (&camera_storage, &transform_storage).join().next()
+                        {
                             let center_screen = Point3::new(x, y, 0.0);
 
                             let world_point = camera.projection().screen_to_world_point(
@@ -89,7 +94,7 @@ impl<'a> System<'a> for UserInputSystem {
                                     transform.set_translation_xyz(
                                         rect.bottom_left.x as f32,
                                         rect.bottom_left.y as f32,
-                                        z_layer_to_coordinate(ZLayer::Minion),
+                                        z_layer_to_coordinate(ZLayer::Tower),
                                     );
 
                                     println!("Spawn tower\n");
@@ -123,6 +128,10 @@ impl<'a, 'b> SystemDesc<'a, 'b, UserInputSystem> for UserInputSystemDesc {
             .register_reader();
         let mut tower_sprite_renders = load_sprites(world, "sprites/tower", 1);
         let mut projectile_sprite_renders = load_sprites(world, "sprites/projectile", 1);
-        UserInputSystem::new(reader_id, tower_sprite_renders.pop().unwrap(), projectile_sprite_renders.pop().unwrap())
+        UserInputSystem::new(
+            reader_id,
+            tower_sprite_renders.pop().unwrap(),
+            projectile_sprite_renders.pop().unwrap(),
+        )
     }
 }

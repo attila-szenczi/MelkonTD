@@ -21,6 +21,7 @@ use crate::{
     minion_update_system::MinionUpdateSystem,
     projectile_death_system::ProjectileDeathSystem,
     projectile_update_system::ProjectileUpdateSystem,
+    simple_animation_system::SimpleAnimationSystem,
     texture_lookup::TextureLookup,
     tile_map::{TileMap, TileType},
     tower_update_system::TowerUpdateSystem,
@@ -71,6 +72,15 @@ impl<'a, 'b> GameState<'a, 'b> {
                 ProjectileDeathSystem,
                 "projectile_death_system",
                 &["input_system", "projectile_update_system"],
+            )
+            .with(
+                SimpleAnimationSystem,
+                "simple_animation_system",
+                &[
+                    "input_system",
+                    "projectile_update_system",
+                    "tower_update_system",
+                ],
             );
         let transform_bundle = TransformBundle::new();
         transform_bundle
@@ -223,6 +233,6 @@ fn create_user_input_system(world: &World) -> UserInputSystem {
     UserInputSystem::new(
         reader_id,
         texture_lookup.get_texture("sprites/tower", 0),
-        texture_lookup.get_texture("sprites/projectile", 0),
+        texture_lookup.get_texture_with_scale("private_sprites/pulsing_electric_ball", 32),
     )
 }

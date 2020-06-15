@@ -29,6 +29,8 @@ mod tower;
 mod tower_update_system;
 mod user_input_system;
 mod z_layer;
+mod simple_animation;
+mod simple_animation_system;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());

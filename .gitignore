@@ -1,5 +1,6 @@
 # Unwanted files
 target
+resources/private_sprites/*.png
 
 # Backup files
 .DS_Store

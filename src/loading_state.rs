@@ -66,6 +66,7 @@ fn init_texture_lookup(world: &mut World) {
     texture_lookup.insert(world, "sprites/healthbar_outline", 1, 32, 32);
     texture_lookup.insert(world, "sprites/tower", 1, 50, 50);
     texture_lookup.insert(world, "sprites/projectile", 1, 16, 16);
+    texture_lookup.insert(world, "private_sprites/pulsing_electric_ball", 8, 512, 512);
     //texture_lookup.insert(data.world, "sprites/tiles", 3, 50, 50);
     world.insert(texture_lookup);
 }

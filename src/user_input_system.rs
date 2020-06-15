@@ -1,7 +1,7 @@
 use amethyst::shrev::EventChannel;
 use amethyst::{
     assets::AssetStorage,
-    core::math::Point3,
+    core::math::{Point3, Vector3},
     core::transform::Transform,
     derive::SystemDesc,
     ecs::{
@@ -24,19 +24,19 @@ type EventType = InputEvent<StringBindings>;
 pub struct UserInputSystem {
     reader_id: ReaderId<EventType>,
     tower_sprite_render: SpriteRender,
-    projectile_sprite_render: SpriteRender,
+    projectile_sprite_render_with_scale: (SpriteRender, Vector3<f32>),
 }
 
 impl UserInputSystem {
     pub fn new(
         reader_id: ReaderId<EventType>,
         tower_sprite_render: SpriteRender,
-        projectile_sprite_render: SpriteRender,
+        projectile_sprite_render_with_scale: (SpriteRender, Vector3<f32>),
     ) -> Self {
         UserInputSystem {
             reader_id,
             tower_sprite_render,
-            projectile_sprite_render,
+            projectile_sprite_render_with_scale,
         }
     }
 }
@@ -94,12 +94,14 @@ impl<'a> System<'a> for UserInputSystem {
                                         z_layer_to_coordinate(ZLayer::Tower),
                                     );
 
-                                    println!("Spawn tower\n");
                                     let entity = updater
                                         .create_entity(&entities)
                                         .with(self.tower_sprite_render.clone())
                                         .with(transform)
-                                        .with(Tower::new(self.projectile_sprite_render.clone()))
+                                        .with(Tower::new(
+                                            self.projectile_sprite_render_with_scale.0.clone(),
+                                            self.projectile_sprite_render_with_scale.1,
+                                        ))
                                         .build();
                                     tile_map.occupy_slot(index, entity);
                                 }

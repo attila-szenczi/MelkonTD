@@ -9,6 +9,7 @@ use if_chain::if_chain;
 
 use crate::minion::Minion;
 use crate::projectile::Projectile;
+use crate::simple_animation::SimpleAnimation;
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 
 pub struct Tower {
@@ -18,6 +19,7 @@ pub struct Tower {
     pub firing_timer: f32,
     pub range: f32,
     sprite_render: SpriteRender,
+    sprite_scale: Vector3<f32>,
 }
 
 impl Component for Tower {
@@ -25,13 +27,14 @@ impl Component for Tower {
 }
 
 impl Tower {
-    pub fn new(sprite_render: SpriteRender) -> Self {
+    pub fn new(sprite_render: SpriteRender, sprite_scale: Vector3<f32>) -> Self {
         Tower {
             target: None,
             damage: 10,
             firing_timer: 1.,
             range: 70.,
             sprite_render,
+            sprite_scale,
         }
     }
 
@@ -79,11 +82,13 @@ impl Tower {
             tower_translation.y as f32,
             z_layer_to_coordinate(ZLayer::Projectile),
         );
+        transform.set_scale(self.sprite_scale);
         updater
             .create_entity(&entities)
             .with(self.sprite_render.clone())
             .with(transform)
             .with(Projectile::new(self.target.unwrap(), 10, 5., 150.))
+            .with(SimpleAnimation::new(0, 8, 0.05))
             .build();
         self.reset_timer();
     }

@@ -21,7 +21,7 @@ use crate::z_layer::ZLayer;
 pub struct DefaultInputState;
 
 impl<'b> InputState for DefaultInputState {
-  fn process_events<'a>(
+  fn process_event<'a>(
     &mut self,
     event: &EventType,
     input_handler: &Read<'a, InputHandler<StringBindings>>,

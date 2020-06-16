@@ -21,7 +21,7 @@ pub enum Transition {
 pub type EventType = InputEvent<StringBindings>;
 
 pub trait InputState: Send {
-  fn process_events<'a>(
+  fn process_event<'a>(
     &mut self,
     event: &EventType,
     input_handler: &Read<'a, InputHandler<StringBindings>>,

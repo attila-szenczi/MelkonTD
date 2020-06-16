@@ -66,7 +66,7 @@ impl<'a> System<'a> for UserInputSystem {
   ) {
     let state = self.state_stack.last_mut().unwrap();
     for event in channel.read(&mut self.reader_id) {
-      state.process_events(
+      state.process_event(
         event,
         &input_handler,
         &mut tile_map,

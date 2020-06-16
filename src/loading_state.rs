@@ -1,6 +1,6 @@
 use amethyst::{
-    input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
-    prelude::*,
+  input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
+  prelude::*,
 };
 
 use log::info;
@@ -11,62 +11,62 @@ use utils::coord::Coord;
 pub struct LoadingState;
 
 impl SimpleState for LoadingState {
-    // On start will run when this state is initialized. For more
-    // state lifecycle hooks, see:
-    // https://book.amethyst.rs/stable/concepts/state.html#life-cycle
-    fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        let tile_map = TileMap::new(
-            vec![
-                0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 1, 2, 1, 0, 0, 0, 2, 0, 0, 0, 1, 2, 1, 0, 0, 0, 2,
-                0, 0, 0, 1, 2, 1, 0, 0, 0, 2, 0, 0, 0, 1, 2, 1, 0, 0, 0, 2, 0, 0,
-            ],
-            Coord::new(300, 50),
-            10,
-            5,
-            50,
-            50,
-        );
+  // On start will run when this state is initialized. For more
+  // state lifecycle hooks, see:
+  // https://book.amethyst.rs/stable/concepts/state.html#life-cycle
+  fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
+    let tile_map = TileMap::new(
+      vec![
+        0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 1, 2, 1, 0, 0, 0, 2, 0, 0, 0, 1, 2, 1, 0, 0, 0, 2, 0, 0,
+        0, 1, 2, 1, 0, 0, 0, 2, 0, 0, 0, 1, 2, 1, 0, 0, 0, 2, 0, 0,
+      ],
+      Coord::new(300, 50),
+      10,
+      5,
+      50,
+      50,
+    );
 
-        data.world.insert(tile_map);
+    data.world.insert(tile_map);
 
-        init_texture_lookup(data.world);
+    init_texture_lookup(data.world);
+  }
+
+  fn handle_event(
+    &mut self,
+    mut _data: StateData<'_, GameData<'_, '_>>,
+    event: StateEvent,
+  ) -> SimpleTrans {
+    if let StateEvent::Window(event) = &event {
+      // Check if the window should be closed
+      if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
+        return Trans::Quit;
+      }
+
+      // Listen to any key events
+      if let Some(event) = get_key(&event) {
+        info!("handling key event: {:?}", event);
+      }
+
+      // If you're looking for a more sophisticated event handling solution,
+      // including key bindings and gamepad support, please have a look at
+      // https://book.amethyst.rs/stable/pong-tutorial/pong-tutorial-03.html#capturing-user-input
     }
 
-    fn handle_event(
-        &mut self,
-        mut _data: StateData<'_, GameData<'_, '_>>,
-        event: StateEvent,
-    ) -> SimpleTrans {
-        if let StateEvent::Window(event) = &event {
-            // Check if the window should be closed
-            if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
-                return Trans::Quit;
-            }
-
-            // Listen to any key events
-            if let Some(event) = get_key(&event) {
-                info!("handling key event: {:?}", event);
-            }
-
-            // If you're looking for a more sophisticated event handling solution,
-            // including key bindings and gamepad support, please have a look at
-            // https://book.amethyst.rs/stable/pong-tutorial/pong-tutorial-03.html#capturing-user-input
-        }
-
-        return Trans::Push(Box::new(GameState::default()));
-    }
+    return Trans::Push(Box::new(GameState::default()));
+  }
 }
 
 fn init_texture_lookup(world: &mut World) {
-    let mut texture_lookup = TextureLookup::default();
+  let mut texture_lookup = TextureLookup::default();
 
-    texture_lookup.insert(world, "sprites/minion", 1, 50, 50);
-    texture_lookup.insert(world, "sprites/healthbar_back", 1, 32, 32);
-    texture_lookup.insert(world, "sprites/healthbar_front", 1, 32, 32);
-    texture_lookup.insert(world, "sprites/healthbar_outline", 1, 32, 32);
-    texture_lookup.insert(world, "sprites/tower", 1, 50, 50);
-    texture_lookup.insert(world, "sprites/projectile", 1, 16, 16);
-    texture_lookup.insert(world, "private_sprites/pulsing_electric_ball", 8, 512, 512);
-    //texture_lookup.insert(data.world, "sprites/tiles", 3, 50, 50);
-    world.insert(texture_lookup);
+  texture_lookup.insert(world, "sprites/minion", 1, 50, 50);
+  texture_lookup.insert(world, "sprites/healthbar_back", 1, 32, 32);
+  texture_lookup.insert(world, "sprites/healthbar_front", 1, 32, 32);
+  texture_lookup.insert(world, "sprites/healthbar_outline", 1, 32, 32);
+  texture_lookup.insert(world, "sprites/tower", 1, 50, 50);
+  texture_lookup.insert(world, "sprites/projectile", 1, 16, 16);
+  texture_lookup.insert(world, "private_sprites/pulsing_electric_ball", 8, 512, 512);
+  //texture_lookup.insert(data.world, "sprites/tiles", 3, 50, 50);
+  world.insert(texture_lookup);
 }

@@ -7,21 +7,21 @@ use crate::minion::Minion;
 pub struct MinionDeathSystem;
 
 impl<'a> System<'a> for MinionDeathSystem {
-    type SystemData = (
-        Entities<'a>,
-        ReadStorage<'a, Minion>,
-        Write<'a, HierarchyLookup>,
-    );
+  type SystemData = (
+    Entities<'a>,
+    ReadStorage<'a, Minion>,
+    Write<'a, HierarchyLookup>,
+  );
 
-    fn run(&mut self, (entities, minions, mut hierarchy_lookup): Self::SystemData) {
-        for (entity, minion) in (&entities, &minions).join() {
-            if minion.health <= 0 {
-                match entities.delete(entity) {
-                    Err(e) => println!("error during entity deletion: {:?}", e),
-                    Ok(_v) => (),
-                }
-                hierarchy_lookup.remove_entity(entity);
-            }
+  fn run(&mut self, (entities, minions, mut hierarchy_lookup): Self::SystemData) {
+    for (entity, minion) in (&entities, &minions).join() {
+      if minion.health <= 0 {
+        match entities.delete(entity) {
+          Err(e) => println!("error during entity deletion: {:?}", e),
+          Ok(_v) => (),
         }
+        hierarchy_lookup.remove_entity(entity);
+      }
     }
+  }
 }

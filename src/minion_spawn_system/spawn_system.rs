@@ -90,7 +90,6 @@ impl<'a> System<'a> for MinionSpawnSystem {
         self.counter += 1;
 
         if self.counter == 30 {
-            print!("Spawn\n");
             let mut transform = Transform::default();
             transform.set_translation_xyz(
                 SPAWN_POINT_X,

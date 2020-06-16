@@ -14,6 +14,7 @@ use amethyst::core::frame_limiter::FrameRateLimitStrategy;
 
 mod game_state;
 mod hierarchy_lookup;
+mod input_system;
 mod load_image;
 mod loading_state;
 mod minion;
@@ -23,14 +24,13 @@ mod minion_update_system;
 mod projectile;
 mod projectile_death_system;
 mod projectile_update_system;
+mod simple_animation;
+mod simple_animation_system;
 mod texture_lookup;
 mod tile_map;
 mod tower;
 mod tower_update_system;
-mod user_input_system;
 mod z_layer;
-mod simple_animation;
-mod simple_animation_system;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());

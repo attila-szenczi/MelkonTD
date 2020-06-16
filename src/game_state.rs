@@ -15,6 +15,7 @@ use amethyst::{
 use log::info;
 
 use crate::{
+    input_system::UserInputSystem,
     load_image::load_sprites,
     minion_death_system::MinionDeathSystem,
     minion_spawn_system::MinionSpawnSystem,
@@ -25,7 +26,6 @@ use crate::{
     texture_lookup::TextureLookup,
     tile_map::{TileMap, TileType},
     tower_update_system::TowerUpdateSystem,
-    user_input_system::UserInputSystem,
     z_layer::{z_layer_to_coordinate, ZLayer},
 };
 
@@ -76,11 +76,7 @@ impl<'a, 'b> GameState<'a, 'b> {
             .with(
                 SimpleAnimationSystem,
                 "simple_animation_system",
-                &[
-                    "input_system",
-                    "projectile_update_system",
-                    "tower_update_system",
-                ],
+                &["input_system"],
             );
         let transform_bundle = TransformBundle::new();
         transform_bundle

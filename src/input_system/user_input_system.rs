@@ -1,117 +1,82 @@
 use amethyst::shrev::EventChannel;
 use amethyst::{
-    assets::AssetStorage,
-    core::math::{Point3, Vector3},
-    core::transform::Transform,
-    derive::SystemDesc,
-    ecs::{
-        prelude::*,
-        prelude::{Entities, LazyUpdate, Read, System},
-    },
-    input::{InputEvent, InputHandler, StringBindings},
-    renderer::{Camera, SpriteRender, SpriteSheet, Texture},
-    window::ScreenDimensions,
-    winit::MouseButton,
+  assets::AssetStorage,
+  core::transform::Transform,
+  derive::SystemDesc,
+  ecs::{
+    prelude::*,
+    prelude::{Entities, LazyUpdate, Read, System},
+  },
+  input::{InputHandler, StringBindings},
+  renderer::{Camera, SpriteSheet, Texture},
+  window::ScreenDimensions,
 };
 
-use crate::tile_map::{TileMap, TileType};
-use crate::tower::Tower;
-use crate::z_layer::{z_layer_to_coordinate, ZLayer};
-
-type EventType = InputEvent<StringBindings>;
+use super::default_input_state::DefaultInputState;
+use super::input_state_trait::EventType;
+use super::input_state_trait::InputState;
+use crate::texture_lookup::TextureLookup;
+use crate::tile_map::TileMap;
 
 #[derive(SystemDesc)]
 pub struct UserInputSystem {
-    reader_id: ReaderId<EventType>,
-    tower_sprite_render: SpriteRender,
-    projectile_sprite_render_with_scale: (SpriteRender, Vector3<f32>),
+  reader_id: ReaderId<EventType>,
+  state_stack: Vec<Box<dyn InputState>>,
 }
 
 impl UserInputSystem {
-    pub fn new(
-        reader_id: ReaderId<EventType>,
-        tower_sprite_render: SpriteRender,
-        projectile_sprite_render_with_scale: (SpriteRender, Vector3<f32>),
-    ) -> Self {
-        UserInputSystem {
-            reader_id,
-            tower_sprite_render,
-            projectile_sprite_render_with_scale,
-        }
+  pub fn new(reader_id: ReaderId<EventType>) -> Self {
+    UserInputSystem {
+      reader_id,
+      state_stack: vec![Box::new(DefaultInputState)],
     }
+  }
 }
 
 impl<'a> System<'a> for UserInputSystem {
-    type SystemData = (
-        Read<'a, EventChannel<EventType>>,
-        Read<'a, InputHandler<StringBindings>>,
-        WriteExpect<'a, TileMap>,
-        Entities<'a>,
-        Read<'a, LazyUpdate>,
-        Read<'a, AssetStorage<Texture>>,
-        Read<'a, AssetStorage<SpriteSheet>>,
-        ReadStorage<'a, Camera>,
-        ReadStorage<'a, Transform>,
-        ReadExpect<'a, ScreenDimensions>,
-    );
+  type SystemData = (
+    Read<'a, EventChannel<EventType>>,
+    Read<'a, InputHandler<StringBindings>>,
+    WriteExpect<'a, TileMap>,
+    Entities<'a>,
+    Read<'a, LazyUpdate>,
+    Read<'a, AssetStorage<Texture>>,
+    Read<'a, AssetStorage<SpriteSheet>>,
+    ReadStorage<'a, Camera>,
+    ReadStorage<'a, Transform>,
+    ReadExpect<'a, ScreenDimensions>,
+    Read<'a, TextureLookup>,
+  );
 
-    fn run(
-        &mut self,
-        (
-            channel,
-            input_handler,
-            mut tile_map,
-            entities,
-            updater,
-            _texture_storage,
-            _sprite_sheet_storage,
-            camera_storage,
-            transform_storage,
-            screen_dimensions,
-        ): Self::SystemData,
-    ) {
-        for event in channel.read(&mut self.reader_id) {
-            match event {
-                EventType::MouseButtonPressed(MouseButton::Left) => {
-                    if let Some((x, y)) = input_handler.mouse_position() {
-                        if let Some((camera, transform)) =
-                            (&camera_storage, &transform_storage).join().next()
-                        {
-                            let center_screen = Point3::new(x, y, 0.0);
-
-                            let world_point = camera.projection().screen_to_world_point(
-                                center_screen,
-                                screen_dimensions.diagonal(),
-                                &transform,
-                            );
-
-                            match tile_map.find_tile(world_point.x as i32, world_point.y as i32) {
-                                Some((index, TileType::Slot, rect)) => {
-                                    let mut transform = Transform::default();
-                                    transform.set_translation_xyz(
-                                        rect.bottom_left.x as f32,
-                                        rect.bottom_left.y as f32,
-                                        z_layer_to_coordinate(ZLayer::Tower),
-                                    );
-
-                                    let entity = updater
-                                        .create_entity(&entities)
-                                        .with(self.tower_sprite_render.clone())
-                                        .with(transform)
-                                        .with(Tower::new(
-                                            self.projectile_sprite_render_with_scale.0.clone(),
-                                            self.projectile_sprite_render_with_scale.1,
-                                        ))
-                                        .build();
-                                    tile_map.occupy_slot(index, entity);
-                                }
-                                _ => (),
-                            }
-                        }
-                    }
-                }
-                _ => (),
-            }
-        }
+  fn run(
+    &mut self,
+    (
+      channel,
+      input_handler,
+      mut tile_map,
+      entities,
+      updater,
+      _texture_storage,
+      _sprite_sheet_storage,
+      camera_storage,
+      transform_storage,
+      screen_dimensions,
+      texture_lookup,
+    ): Self::SystemData,
+  ) {
+    let state = self.state_stack.last_mut().unwrap();
+    for event in channel.read(&mut self.reader_id) {
+      state.process_events(
+        event,
+        &input_handler,
+        &mut tile_map,
+        &entities,
+        &updater,
+        &camera_storage,
+        &transform_storage,
+        &screen_dimensions,
+        &texture_lookup,
+      );
     }
+  }
 }

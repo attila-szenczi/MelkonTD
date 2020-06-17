@@ -13,8 +13,7 @@ use amethyst::{
 };
 
 use super::default_input_state::DefaultInputState;
-use super::input_state_trait::EventType;
-use super::input_state_trait::InputState;
+use super::input_state_trait::{EventType, InputState, Transition};
 use crate::texture_lookup::TextureLookup;
 use crate::tile_map::TileMap;
 
@@ -65,18 +64,37 @@ impl<'a> System<'a> for UserInputSystem {
     ): Self::SystemData,
   ) {
     let state = self.state_stack.last_mut().unwrap();
+    let mut transition = Transition::KeepState;
     for event in channel.read(&mut self.reader_id) {
-      state.process_event(
-        event,
-        &input_handler,
-        &mut tile_map,
-        &entities,
-        &updater,
-        &camera_storage,
-        &transform_storage,
-        &screen_dimensions,
-        &texture_lookup,
-      );
+      //Continue the loop even in case it's not KeepState to drop each event before transitioning to the next state.
+      match transition {
+        Transition::KeepState => {
+          transition = state.process_event(
+            event,
+            &input_handler,
+            &mut tile_map,
+            &entities,
+            &updater,
+            &camera_storage,
+            &transform_storage,
+            &screen_dimensions,
+            &texture_lookup,
+          );
+        }
+        _ => (),
+      }
+    }
+
+    match transition {
+      Transition::KeepState => (),
+      Transition::PopState => {
+        self.state_stack.pop();
+        ()
+      }
+      Transition::PushState(state) => {
+        self.state_stack.push(state);
+        ()
+      }
     }
   }
 }

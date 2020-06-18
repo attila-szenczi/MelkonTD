@@ -5,6 +5,7 @@ use amethyst::{
 
 use log::info;
 
+use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 use crate::{game_state::GameState, texture_lookup::TextureLookup, tile_map::TileMap};
 use utils::coord::Coord;
 
@@ -60,14 +61,86 @@ impl SimpleState for LoadingState {
 fn init_texture_lookup(world: &mut World) {
   let mut texture_lookup = TextureLookup::default();
 
-  texture_lookup.insert(world, "sprites/minion", 1, 50, 50);
-  texture_lookup.insert(world, "sprites/healthbar_back", 1, 32, 32);
-  texture_lookup.insert(world, "sprites/healthbar_front", 1, 32, 32);
-  texture_lookup.insert(world, "sprites/healthbar_outline", 1, 32, 32);
-  texture_lookup.insert(world, "sprites/tower", 1, 50, 50);
-  texture_lookup.insert(world, "sprites/projectile", 1, 16, 16);
-  texture_lookup.insert(world, "sprites/build_tower", 1, 32, 32);
-  texture_lookup.insert(world, "private_sprites/pulsing_electric_ball", 8, 512, 512);
+  texture_lookup.insert(
+    world,
+    "sprites/minion",
+    1,
+    50,
+    50,
+    50,
+    50,
+    z_layer_to_coordinate(ZLayer::Minion),
+  );
+  texture_lookup.insert(
+    world,
+    "sprites/healthbar_back",
+    1,
+    32,
+    32,
+    32,
+    32,
+    z_layer_to_coordinate(ZLayer::HealthBarBack),
+  );
+  texture_lookup.insert(
+    world,
+    "sprites/healthbar_front",
+    1,
+    32,
+    32,
+    32,
+    32,
+    z_layer_to_coordinate(ZLayer::HealthBarFront),
+  );
+  texture_lookup.insert(
+    world,
+    "sprites/healthbar_outline",
+    1,
+    32,
+    32,
+    32,
+    32,
+    z_layer_to_coordinate(ZLayer::HealthBarBack),
+  );
+  texture_lookup.insert(
+    world,
+    "sprites/tower",
+    1,
+    50,
+    50,
+    50,
+    50,
+    z_layer_to_coordinate(ZLayer::Tower),
+  );
+  texture_lookup.insert(
+    world,
+    "sprites/projectile",
+    1,
+    16,
+    16,
+    16,
+    16,
+    z_layer_to_coordinate(ZLayer::Projectile),
+  );
+  texture_lookup.insert(
+    world,
+    "sprites/build_tower",
+    1,
+    32,
+    32,
+    32,
+    32,
+    z_layer_to_coordinate(ZLayer::UiFlyout),
+  );
+  texture_lookup.insert(
+    world,
+    "private_sprites/pulsing_electric_ball",
+    8,
+    512,
+    512,
+    32,
+    32,
+    z_layer_to_coordinate(ZLayer::Projectile),
+  );
   //texture_lookup.insert(data.world, "sprites/tiles", 3, 50, 50);
   world.insert(texture_lookup);
 }

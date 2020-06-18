@@ -108,8 +108,8 @@ impl<'b> InputState for FlyoutInputState {
                 z_layer_to_coordinate(ZLayer::Tower),
               );
 
-              let projectile_sprite_render_with_scale =
-                texture_lookup.get_texture_with_scale("private_sprites/pulsing_electric_ball", 32);
+              let projectile_sprite_render_with_scale = texture_lookup
+                .get_texture_with_default_scale("private_sprites/pulsing_electric_ball");
               let entity = updater
                 .create_entity(&entities)
                 .with(texture_lookup.get_texture("sprites/tower", 0))

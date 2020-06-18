@@ -10,6 +10,6 @@ The project's scope is not yet decided, it can be anything in this range:
 
 **Warning: Custom assets are used which i doesn't have permission to upload, thus the project can't be tested without creating dummy assets which match the ron files in the resources/private_sprites folder.**
 
-Current state (2020.06.14):
+Current state (2020.06.20):
 
-![Alt Text](./showcase_healthbar.gif)
+![Alt Text](./showcase/2020_06_18_showcase_flyout.gif)

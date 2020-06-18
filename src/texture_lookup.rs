@@ -9,8 +9,8 @@ use crate::load_image::load_sprites;
 pub struct TextureData {
   sprite_renders: Vec<SpriteRender>,
   // sprite_count: i32,
-  width: i32,
-  height: i32,
+  //width: i32,
+  //height: i32,
   default_scale: Vector3<f32>, //Used by default unless an enlarged/miniaturized entity is the goal.
 }
 
@@ -43,8 +43,8 @@ impl TextureLookup {
       TextureData {
         sprite_renders,
         // sprite_count,
-        width,
-        height,
+        // width,
+        // height,
         default_scale,
       },
     );

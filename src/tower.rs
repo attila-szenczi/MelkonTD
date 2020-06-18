@@ -56,14 +56,14 @@ impl Tower {
           if let Some(target_transform) = transforms.get(entity);
           if self.is_in_range(tower_transform.translation(), target_transform.translation());
           then {
-              self.fire(entities, projectiles);
+              self.fire(projectiles);
           } else {
               //TODO: Lookup instead of entities join?
               for (entity, _minion, transform) in (entities, minions, transforms).join() {
                   let tower_translation = tower_transform.translation();
                   if self.is_in_range(tower_translation, transform.translation()) {
                       self.target = Some(entity);
-                      self.fire(entities, projectiles);
+                      self.fire(projectiles);
 
                       break;
                   }
@@ -73,7 +73,7 @@ impl Tower {
     }
   }
 
-  fn fire<'a>(&mut self, entities: &Entities<'a>, projectiles: &mut WriteStorage<'a, Projectile>) {
+  fn fire<'a>(&mut self, projectiles: &mut WriteStorage<'a, Projectile>) {
     if let Some(charging_projectile_entity) = self.charging_projectile {
       if let Some(mut projectile) = projectiles.get_mut(charging_projectile_entity) {
         projectile.fired = true;

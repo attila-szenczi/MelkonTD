@@ -12,4 +12,4 @@ The project's scope is not yet decided, it can be anything in this range:
 
 Current state (2020.06.18):
 
-![Alt Text](./showcase/2020_06_18_showcase_flyout.gif)
+![Alt Text](./showcase/2020_06_18_showcase_pulse_lightning.gif)

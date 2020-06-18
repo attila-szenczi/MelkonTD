@@ -9,6 +9,7 @@ use amethyst::{
 };
 
 use crate::minion::Minion;
+use crate::projectile::Projectile;
 use crate::tower::Tower;
 
 #[derive(SystemDesc, Default)]
@@ -20,17 +21,22 @@ impl<'a> System<'a> for TowerUpdateSystem {
     WriteStorage<'a, Tower>,
     ReadStorage<'a, Minion>,
     ReadStorage<'a, Transform>,
+    WriteStorage<'a, Projectile>,
     Read<'a, LazyUpdate>,
     Read<'a, Time>,
   );
 
-  fn run(&mut self, (entities, mut towers, minions, transforms, updater, time): Self::SystemData) {
+  fn run(
+    &mut self,
+    (entities, mut towers, minions, transforms, mut projectiles, updater, time): Self::SystemData,
+  ) {
     for (tower, transform) in (&mut towers, &transforms).join() {
       tower.update(
         &entities,
         transform,
         &minions,
         &transforms,
+        &mut projectiles,
         &updater,
         time.delta_seconds(),
       );

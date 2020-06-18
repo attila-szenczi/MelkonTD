@@ -19,6 +19,9 @@ pub struct Projectile {
   pub detonation_range: f32,
   pub speed: f32,
   pub delete: bool,
+  pub fired: bool, //Temp as it's related to a concrete projectile type
+  pub max_scale: Vector3<f32>, //Same
+  pub increase_scale : bool, //Same
 }
 
 impl Component for Projectile {
@@ -26,13 +29,22 @@ impl Component for Projectile {
 }
 
 impl Projectile {
-  pub fn new(target: Entity, damage: i32, detonation_range: f32, speed: f32) -> Self {
+  pub fn new(
+    target: Option<Entity>,
+    damage: i32,
+    detonation_range: f32,
+    speed: f32,
+    max_scale: Vector3<f32>,
+  ) -> Self {
     Projectile {
-      target: Some(target),
+      target,
       damage,
       detonation_range,
       speed,
       delete: false,
+      fired: false,
+      max_scale,
+      increase_scale : true,
     }
   }
 
@@ -43,6 +55,9 @@ impl Projectile {
     transforms: &mut WriteStorage<'a, Transform>,
     elapsed: f32,
   ) {
+    if !self.fired {
+      return ();
+    }
     //TODO: Can i spare that clone?
     let projectile_transform = transforms.get(projectile_entity).unwrap().clone();
     if_chain! {

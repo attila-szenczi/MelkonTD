@@ -20,6 +20,7 @@ pub struct Tower {
   pub range: f32,
   sprite_render: SpriteRender,
   sprite_scale: Vector3<f32>,
+  charging_projectile: Option<Entity>, //Temp
 }
 
 impl Component for Tower {
@@ -35,6 +36,7 @@ impl Tower {
       range: 70.,
       sprite_render,
       sprite_scale,
+      charging_projectile: None,
     }
   }
 
@@ -44,23 +46,24 @@ impl Tower {
     tower_transform: &Transform,
     minions: &ReadStorage<'a, Minion>,
     transforms: &ReadStorage<'a, Transform>,
+    projectiles: &mut WriteStorage<'a, Projectile>,
     updater: &Read<'a, LazyUpdate>,
     elapsed: f32,
   ) {
-    if self.update_timer(elapsed) {
+    if self.update_timer(elapsed, entities, updater, tower_transform.translation()) {
       if_chain! {
           if let Some(entity) = self.target;
           if let Some(target_transform) = transforms.get(entity);
           if self.is_in_range(tower_transform.translation(), target_transform.translation());
           then {
-              self.fire(entities, updater, tower_transform.translation());
+              self.fire(entities, projectiles);
           } else {
               //TODO: Lookup instead of entities join?
               for (entity, _minion, transform) in (entities, minions, transforms).join() {
                   let tower_translation = tower_transform.translation();
                   if self.is_in_range(tower_translation, transform.translation()) {
                       self.target = Some(entity);
-                      self.fire(entities, updater, tower_translation);
+                      self.fire(entities, projectiles);
 
                       break;
                   }
@@ -70,7 +73,18 @@ impl Tower {
     }
   }
 
-  fn fire<'a>(
+  fn fire<'a>(&mut self, entities: &Entities<'a>, projectiles: &mut WriteStorage<'a, Projectile>) {
+    if let Some(charging_projectile_entity) = self.charging_projectile {
+      if let Some(mut projectile) = projectiles.get_mut(charging_projectile_entity) {
+        projectile.fired = true;
+        projectile.target = self.target;
+      }
+    }
+    self.charging_projectile = None;
+    self.reset_timer();
+  }
+
+  fn charge_projectile<'a>(
     &mut self,
     entities: &Entities<'a>,
     updater: &Read<'a, LazyUpdate>,
@@ -79,23 +93,37 @@ impl Tower {
     let mut transform = Transform::default();
     transform.set_translation_xyz(
       tower_translation.x as f32,
-      tower_translation.y as f32,
+      tower_translation.y as f32 + 20.,
       z_layer_to_coordinate(ZLayer::Projectile),
     );
-    transform.set_scale(self.sprite_scale);
-    updater
-      .create_entity(&entities)
-      .with(self.sprite_render.clone())
-      .with(transform)
-      .with(Projectile::new(self.target.unwrap(), 10, 5., 150.))
-      .with(SimpleAnimation::new(0, 8, 0.05))
-      .build();
-    self.reset_timer();
+    transform.set_scale(Vector3::new(
+      self.sprite_scale.x / 10. * 1.1,
+      self.sprite_scale.y / 10. * 1.1,
+      self.sprite_scale.z,
+    ));
+    self.charging_projectile = Some(
+      updater
+        .create_entity(&entities)
+        .with(self.sprite_render.clone())
+        .with(transform)
+        .with(Projectile::new(None, 10, 5., 150., self.sprite_scale))
+        .with(SimpleAnimation::new(0, 8, 0.05))
+        .build(),
+    );
   }
 
-  fn update_timer(&mut self, elapsed: f32) -> bool {
+  fn update_timer<'a>(
+    &mut self,
+    elapsed: f32,
+    entities: &Entities<'a>,
+    updater: &Read<'a, LazyUpdate>,
+    tower_translation: &Vector3<f32>,
+  ) -> bool {
     if self.firing_timer > 0. {
       self.firing_timer -= elapsed;
+      if self.firing_timer < 0.8 && self.charging_projectile == None {
+        self.charge_projectile(entities, updater, tower_translation);
+      }
     } else {
       self.firing_timer = 0.;
     }

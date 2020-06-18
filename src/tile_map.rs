@@ -81,8 +81,8 @@ impl TileMap {
         *self.tiles.get(index as usize).unwrap(),
         Rect {
           bottom_left: Coord {
-            x: self.map_rect.bottom_left.x + column * self.tile_width + self.tile_width / 2,
-            y: self.map_rect.bottom_left.y + row * self.tile_height + self.tile_height / 2,
+            x: self.map_rect.bottom_left.x + column * self.tile_width,
+            y: self.map_rect.bottom_left.y + row * self.tile_height,
           },
           width: self.tile_width,
           height: self.tile_height,

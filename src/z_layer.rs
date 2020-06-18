@@ -5,6 +5,7 @@ pub enum ZLayer {
   Projectile,
   HealthBarBack,
   HealthBarFront,
+  UiFlyout,
 }
 
 pub fn z_layer_to_coordinate(layer: ZLayer) -> f32 {

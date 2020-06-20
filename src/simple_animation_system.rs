@@ -45,6 +45,7 @@ impl<'a> System<'a> for SimpleAnimationSystem {
       }
       let scale = transform.scale_mut();
 
+      //TODO: Projectile update?
       let diff = {
         if projectile.increase_scale {
           projectile.max_scale.x * elapsed

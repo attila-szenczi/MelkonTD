@@ -22,8 +22,6 @@ mod minion_death_system;
 mod minion_spawn_system;
 mod minion_update_system;
 mod projectile;
-mod projectile_death_system;
-mod projectile_update_system;
 mod simple_animation;
 mod simple_animation_system;
 mod texture_lookup;

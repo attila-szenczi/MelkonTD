@@ -19,9 +19,9 @@ pub struct Projectile {
   pub detonation_range: f32,
   pub speed: f32,
   pub delete: bool,
-  pub fired: bool, //Temp as it's related to a concrete projectile type
+  pub fired: bool,             //Temp as it's related to a concrete projectile type
   pub max_scale: Vector3<f32>, //Same
-  pub increase_scale : bool, //Same
+  pub increase_scale: bool,    //Same
 }
 
 impl Component for Projectile {
@@ -44,7 +44,7 @@ impl Projectile {
       delete: false,
       fired: false,
       max_scale,
-      increase_scale : true,
+      increase_scale: true,
     }
   }
 

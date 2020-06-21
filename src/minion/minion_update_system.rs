@@ -38,7 +38,7 @@ impl<'a> System<'a> for MinionUpdateSystem {
       match transform {
         Some(t) => {
           //TODO: Get rid of hardcoded stuff
-          let multiplyer = (minion.health as f32 / minion.max_health as f32) * 2.;
+          let multiplyer = (minion.health() as f32 / minion.max_health() as f32) * 2.;
           t.set_translation_x((multiplyer - 2.) * 16.);
           let scale = t.scale_mut();
           scale.x = multiplyer;

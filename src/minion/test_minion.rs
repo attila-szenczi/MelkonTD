@@ -1,25 +1,39 @@
 use amethyst::ecs::{Component, DenseVecStorage};
 
-pub struct Minion {
-  //TODO: box dyn trait
+use super::minion_trait::MinionTrait;
+
+pub struct TestMinion {
   pub max_health: i32,
   pub health: i32,
 }
 
-impl Minion {
+impl TestMinion {
   pub fn new() -> Self {
-    Minion {
+    TestMinion {
       max_health: 20,
       health: 20,
     }
   }
-
-  pub fn hit(&mut self, damage: i32) {
-    self.health -= damage;
-    println!("Minion got hit, remaining health: {:?}", self.health);
-  }
 }
 
-impl Component for Minion {
+impl Component for TestMinion {
   type Storage = DenseVecStorage<Self>;
+}
+
+impl MinionTrait for TestMinion {
+  fn hit(&mut self, damage: i32) {
+    self.health -= damage;
+  }
+
+  fn health(&self) -> i32 {
+    self.health
+  }
+
+  fn max_health(&self) -> i32 {
+    self.max_health
+  }
+  fn dead(&self) -> bool
+  {
+    self.health <= 0
+  }
 }

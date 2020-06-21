@@ -15,7 +15,7 @@ impl<'a> System<'a> for MinionDeathSystem {
 
   fn run(&mut self, (entities, minions, mut hierarchy_lookup): Self::SystemData) {
     for (entity, minion) in (&entities, &minions).join() {
-      if minion.health <= 0 {
+      if minion.dead() {
         match entities.delete(entity) {
           Err(e) => println!("error during entity deletion: {:?}", e),
           Ok(_v) => (),

@@ -12,7 +12,7 @@ use amethyst::{
 
 use crate::{
   hierarchy_lookup::HierarchyLookup,
-  minion::Minion,
+  minion::{Minion, TestMinion},
   z_layer::{z_layer_to_coordinate, ZLayer},
 };
 
@@ -101,7 +101,7 @@ impl<'a> System<'a> for MinionSpawnSystem {
         .create_entity(&entities)
         .with(self.sprite_render_minion.clone())
         .with(transform)
-        .with(Minion::new())
+        .with(Minion::new(Box::new(TestMinion::new())))
         .build();
 
       self.insert_child_rect(

@@ -27,7 +27,6 @@ mod simple_animation_system;
 mod texture_lookup;
 mod tile_map;
 mod tower;
-mod tower_update_system;
 mod z_layer;
 
 fn main() -> amethyst::Result<()> {

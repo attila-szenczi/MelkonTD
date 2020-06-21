@@ -14,6 +14,7 @@ use amethyst::{
 
 use log::info;
 
+use crate::tower::TowerUpdateSystem;
 use crate::{
   input_system::UserInputSystem,
   load_image::load_sprites,
@@ -25,7 +26,6 @@ use crate::{
   simple_animation_system::SimpleAnimationSystem,
   texture_lookup::TextureLookup,
   tile_map::{TileMap, TileType},
-  tower_update_system::TowerUpdateSystem,
   z_layer::{z_layer_to_coordinate, ZLayer},
 };
 

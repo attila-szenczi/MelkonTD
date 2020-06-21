@@ -9,6 +9,7 @@ use if_chain::if_chain;
 
 use crate::minion::Minion;
 use crate::projectile::Projectile;
+use crate::projectile::PulsingElectricBall;
 use crate::simple_animation::SimpleAnimation;
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 
@@ -75,9 +76,9 @@ impl Tower {
 
   fn fire<'a>(&mut self, projectiles: &mut WriteStorage<'a, Projectile>) {
     if let Some(charging_projectile_entity) = self.charging_projectile {
-      if let Some(mut projectile) = projectiles.get_mut(charging_projectile_entity) {
-        projectile.fired = true;
-        projectile.target = self.target;
+      if let Some(projectile) = projectiles.get_mut(charging_projectile_entity) {
+        projectile.fire();
+        projectile.set_target(self.target.unwrap());
       }
     }
     self.charging_projectile = None;
@@ -106,7 +107,12 @@ impl Tower {
         .create_entity(&entities)
         .with(self.sprite_render.clone())
         .with(transform)
-        .with(Projectile::new(None, 10, 5., 150., self.sprite_scale))
+        .with(Projectile::new(Box::new(PulsingElectricBall::new(
+          10,
+          5.,
+          150.,
+          self.sprite_scale,
+        ))))
         .with(SimpleAnimation::new(0, 8, 0.05))
         .build(),
     );

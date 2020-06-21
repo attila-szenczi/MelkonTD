@@ -38,4 +38,22 @@ impl Vector2 {
     self.x /= distance;
     self.y /= distance;
   }
+
+  pub fn is_equal(&self, rhs: &Vector2) -> bool {
+    if (self.x - rhs.x).abs() < 0.001 && (self.y - rhs.y).abs() < 0.001 {
+      return true;
+    }
+
+    false
+  }
+}
+
+impl PartialEq for Vector2 {
+  fn eq(&self, other: &Self) -> bool {
+    if (self.x - other.x).abs() < 0.001 && (self.y - other.y).abs() < 0.001 {
+      return true;
+    }
+
+    false
+  }
 }

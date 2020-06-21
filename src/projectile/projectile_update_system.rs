@@ -8,8 +8,8 @@ use amethyst::{
   },
 };
 
+use super::Projectile;
 use crate::minion::Minion;
-use crate::projectile::Projectile;
 
 #[derive(SystemDesc)]
 pub struct ProjectileUpdateSystem;

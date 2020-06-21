@@ -14,6 +14,7 @@ use utils::coord::Vector2;
 enum PulsingState {
   Increase,
   Decrease,
+  Dieing, //Target lost
 }
 
 pub struct PulsingElectricBall {
@@ -25,6 +26,7 @@ pub struct PulsingElectricBall {
   fired: bool,
   normal_scale: Vector3<f32>,
   pulsing_state: PulsingState,
+  last_direction: Option<Vector2>,
 }
 
 impl PulsingElectricBall {
@@ -38,6 +40,7 @@ impl PulsingElectricBall {
       fired: false,
       normal_scale,
       pulsing_state: PulsingState::Increase,
+      last_direction: None,
     }
   }
 
@@ -90,14 +93,16 @@ impl PulsingElectricBall {
   fn update_projectile_translation(
     &mut self,
     projectile_transform: &mut Transform,
-    projectile_translation: &Vector3<f32>,
     direction: &Vector2,
     elapsed: f32,
   ) {
+    let projectile_translation = projectile_transform.translation().clone();
     projectile_transform
       .set_translation_x(projectile_translation.x + direction.x * elapsed * self.speed);
     projectile_transform
       .set_translation_y(projectile_translation.y + direction.y * elapsed * self.speed);
+
+    self.last_direction = Some(direction.clone());
   }
 
   fn handle_going_beyond_target<'a>(
@@ -139,8 +144,7 @@ impl ProjectileTrait for PulsingElectricBall {
     if !self.fired {
       return ();
     }
-    //TODO: Can i spare that clone?
-    let projectile_transform = transforms.get(projectile_entity).unwrap().clone();
+    let projectile_transform = transforms.get(projectile_entity).unwrap();
     if_chain! {
         if let Some(target) = self.target;
         if let Some(target_transform) = transforms.get(target);
@@ -154,13 +158,19 @@ impl ProjectileTrait for PulsingElectricBall {
                                                  target_translation.y - projectile_translation.y);
                 direction.normalize();
                 let projectile_transform_mut = transforms.get_mut(projectile_entity).unwrap();
-                self.update_projectile_translation(projectile_transform_mut, projectile_translation, &direction, elapsed);
+                self.update_projectile_translation(projectile_transform_mut, &direction, elapsed);
 
                 self.handle_going_beyond_target(projectile_transform_mut, &target_translation, &direction, minions, target);
             }
         } else {
-            //TODO: Keep going in the same direction, decrease scale and then die
-            self.delete = true;
+          let projectile_transform = transforms.get_mut(projectile_entity).unwrap();
+          let direction = self.last_direction.unwrap();
+
+            self.update_projectile_translation(projectile_transform, &direction, elapsed);
+            self.pulsing_state = PulsingState::Dieing;
+            if projectile_transform.scale().x < 0.01 {
+              self.delete = true;
+            }
         }
     }
   }

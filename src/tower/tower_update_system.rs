@@ -8,9 +8,9 @@ use amethyst::{
   },
 };
 
+use super::tower_component::Tower;
 use crate::minion::Minion;
 use crate::projectile::Projectile;
-use crate::tower::Tower;
 
 #[derive(SystemDesc, Default)]
 pub struct TowerUpdateSystem;

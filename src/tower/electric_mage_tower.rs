@@ -7,30 +7,30 @@ use amethyst::{
 
 use if_chain::if_chain;
 
+use super::tower_trait::TowerTrait;
 use crate::minion::Minion;
 use crate::projectile::Projectile;
 use crate::projectile::PulsingElectricBall;
 use crate::simple_animation::SimpleAnimation;
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 
-pub struct Tower {
-  //TODO Boxed dyn trait object to handle firing, evolution options etc
+pub struct ElectricMageTower {
   pub target: Option<Entity>,
   pub damage: i32,
   pub firing_timer: f32,
   pub range: f32,
   sprite_render: SpriteRender,
   sprite_scale: Vector3<f32>,
-  charging_projectile: Option<Entity>, //Temp
+  charging_projectile: Option<Entity>,
 }
 
-impl Component for Tower {
+impl Component for ElectricMageTower {
   type Storage = DenseVecStorage<Self>;
 }
 
-impl Tower {
+impl ElectricMageTower {
   pub fn new(sprite_render: SpriteRender, sprite_scale: Vector3<f32>) -> Self {
-    Tower {
+    ElectricMageTower {
       target: None,
       damage: 10,
       firing_timer: 1.,
@@ -38,39 +38,6 @@ impl Tower {
       sprite_render,
       sprite_scale,
       charging_projectile: None,
-    }
-  }
-
-  pub fn update<'a>(
-    &mut self,
-    entities: &Entities<'a>,
-    tower_transform: &Transform,
-    minions: &ReadStorage<'a, Minion>,
-    transforms: &ReadStorage<'a, Transform>,
-    projectiles: &mut WriteStorage<'a, Projectile>,
-    updater: &Read<'a, LazyUpdate>,
-    elapsed: f32,
-  ) {
-    if self.update_timer(elapsed, entities, updater, tower_transform.translation()) {
-      if_chain! {
-          if let Some(entity) = self.target;
-          if let Some(target_transform) = transforms.get(entity);
-          if self.is_in_range(tower_transform.translation(), target_transform.translation());
-          then {
-              self.fire(projectiles);
-          } else {
-              //TODO: Lookup instead of entities join?
-              for (entity, _minion, transform) in (entities, minions, transforms).join() {
-                  let tower_translation = tower_transform.translation();
-                  if self.is_in_range(tower_translation, transform.translation()) {
-                      self.target = Some(entity);
-                      self.fire(projectiles);
-
-                      break;
-                  }
-              }
-          }
-      }
     }
   }
 
@@ -145,5 +112,40 @@ impl Tower {
     let x_diff = lhs.x - rhs.x;
     let square_sum = y_diff * y_diff + x_diff * x_diff;
     square_sum.sqrt() < self.range
+  }
+}
+
+impl TowerTrait for ElectricMageTower {
+  fn update<'a>(
+    &mut self,
+    entities: &Entities<'a>,
+    tower_transform: &Transform,
+    minions: &ReadStorage<'a, Minion>,
+    transforms: &ReadStorage<'a, Transform>,
+    projectiles: &mut WriteStorage<'a, Projectile>,
+    updater: &Read<'a, LazyUpdate>,
+    elapsed: f32,
+  ) {
+    if self.update_timer(elapsed, entities, updater, tower_transform.translation()) {
+      if_chain! {
+          if let Some(entity) = self.target;
+          if let Some(target_transform) = transforms.get(entity);
+          if self.is_in_range(tower_transform.translation(), target_transform.translation());
+          then {
+              self.fire(projectiles);
+          } else {
+              //TODO: Lookup instead of entities join?
+              for (entity, _minion, transform) in (entities, minions, transforms).join() {
+                  let tower_translation = tower_transform.translation();
+                  if self.is_in_range(tower_translation, transform.translation()) {
+                      self.target = Some(entity);
+                      self.fire(projectiles);
+
+                      break;
+                  }
+              }
+          }
+      }
+    }
   }
 }

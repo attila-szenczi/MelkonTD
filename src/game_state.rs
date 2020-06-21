@@ -18,9 +18,9 @@ use crate::tower::TowerUpdateSystem;
 use crate::{
   input_system::UserInputSystem,
   load_image::load_sprites,
-  minion_death_system::MinionDeathSystem,
+  minion::MinionDeathSystem,
+  minion::MinionUpdateSystem,
   minion_spawn_system::MinionSpawnSystem,
-  minion_update_system::MinionUpdateSystem,
   projectile::ProjectileDeathSystem,
   projectile::ProjectileUpdateSystem,
   simple_animation_system::SimpleAnimationSystem,

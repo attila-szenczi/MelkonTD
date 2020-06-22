@@ -1,15 +1,17 @@
 use amethyst::ecs::prelude::{Component, DenseVecStorage};
 
 use super::tower_trait::TowerTrait;
+use super::tower_type::TowerType;
 use std::ops::{Deref, DerefMut};
 
 pub struct Tower {
   tower: Box<dyn TowerTrait>,
+  pub tower_type: TowerType,
 }
 
 impl Tower {
-  pub fn new(tower: Box<dyn TowerTrait>) -> Self {
-    Tower { tower }
+  pub fn new(tower: Box<dyn TowerTrait>, tower_type: TowerType) -> Self {
+    Tower { tower, tower_type }
   }
 }
 

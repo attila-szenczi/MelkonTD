@@ -12,6 +12,7 @@ use std::time::Duration;
 
 use amethyst::core::frame_limiter::FrameRateLimitStrategy;
 
+mod flyout_actions;
 mod game_state;
 mod hierarchy_lookup;
 mod input_system;

@@ -5,8 +5,15 @@ use amethyst::{
 
 use log::info;
 
+use crate::flyout_actions::{
+  build_electric_mage_tower_action, EntityType, FlyoutAction, FlyoutActionStorage, FlyoutOption,
+};
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
-use crate::{game_state::GameState, texture_lookup::TextureLookup, tile_map::TileMap};
+use crate::{
+  game_state::GameState,
+  texture_lookup::TextureLookup,
+  tile_map::{TileMap, TileType},
+};
 use utils::coord::Coord;
 
 pub struct LoadingState;
@@ -31,6 +38,7 @@ impl SimpleState for LoadingState {
     data.world.insert(tile_map);
 
     init_texture_lookup(data.world);
+    fill_flyout_actions(data.world);
   }
 
   fn handle_event(
@@ -141,6 +149,28 @@ fn init_texture_lookup(world: &mut World) {
     32,
     z_layer_to_coordinate(ZLayer::Projectile),
   );
+  texture_lookup.insert(
+    world,
+    "sprites/electric_mage_tower_icon",
+    1,
+    512,
+    512,
+    32,
+    32,
+    z_layer_to_coordinate(ZLayer::UiFlyout),
+  );
   //texture_lookup.insert(data.world, "sprites/tiles", 3, 50, 50);
   world.insert(texture_lookup);
+}
+
+fn fill_flyout_actions(world: &mut World) {
+  let mut action_storage = FlyoutActionStorage::default();
+  {
+    let texture_lookup = world.read_resource::<TextureLookup>();
+    action_storage.insert(
+      EntityType::Tile(TileType::Slot),
+      FlyoutOption::Action(build_electric_mage_tower_action(&texture_lookup)),
+    );
+  }
+  world.insert(action_storage);
 }

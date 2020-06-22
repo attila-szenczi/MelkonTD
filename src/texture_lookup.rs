@@ -6,6 +6,11 @@ use std::collections::HashMap;
 
 use crate::load_image::load_sprites;
 
+pub struct SpriteRenderWithDefaultScale {
+  pub sprite_render: SpriteRender,
+  pub default_scale: Vector3<f32>,
+}
+
 pub struct TextureData {
   sprite_renders: Vec<SpriteRender>,
   // sprite_count: i32,
@@ -58,10 +63,13 @@ impl TextureLookup {
     self.lookup.get(&String::from(key)).unwrap().sprite_renders[index as usize].clone()
   }
 
-  pub fn get_texture_with_default_scale(&self, key: &str) -> (SpriteRender, Vector3<f32>) {
+  pub fn get_texture_with_default_scale(&self, key: &str) -> SpriteRenderWithDefaultScale {
     let texture_data = self.lookup.get(&String::from(key)).unwrap();
     let sprite_render = texture_data.sprite_renders[0].clone();
-    (sprite_render, texture_data.default_scale)
+    SpriteRenderWithDefaultScale {
+      sprite_render,
+      default_scale: texture_data.default_scale,
+    }
   }
 
   // pub fn get_texture_with_scale(&self, key: &str, dimension: i32) -> (SpriteRender, Vector3<f32>) {

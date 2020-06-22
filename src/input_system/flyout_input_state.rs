@@ -14,7 +14,7 @@ use amethyst::{
 use super::input_state_trait::{EventType, InputState, Transition};
 use crate::texture_lookup::TextureLookup;
 use crate::tile_map::TileMap;
-use crate::tower::{ElectricMageTower, Tower};
+use crate::tower::{ElectricMageTower, Tower, TowerType};
 use crate::z_layer::z_layer_to_coordinate;
 use crate::z_layer::ZLayer;
 use utils::coord::Coord;
@@ -114,10 +114,13 @@ impl<'b> InputState for FlyoutInputState {
                 .create_entity(&entities)
                 .with(texture_lookup.get_texture("sprites/tower", 0))
                 .with(transform)
-                .with(Tower::new(Box::new(ElectricMageTower::new(
-                  projectile_sprite_render_with_scale.0,
-                  projectile_sprite_render_with_scale.1,
-                ))))
+                .with(Tower::new(
+                  Box::new(ElectricMageTower::new(
+                    projectile_sprite_render_with_scale.sprite_render,
+                    projectile_sprite_render_with_scale.default_scale,
+                  )),
+                  TowerType::ElectricMageTower,
+                ))
                 .build();
 
               entities

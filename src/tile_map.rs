@@ -3,7 +3,7 @@ use amethyst::ecs::prelude::Entity;
 use utils::coord::Coord;
 use utils::rect::Rect;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub enum TileType {
   Unusable,
   Slot,

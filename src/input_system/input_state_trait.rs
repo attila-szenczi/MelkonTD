@@ -9,7 +9,7 @@ use amethyst::{
   window::ScreenDimensions,
 };
 
-use crate::texture_lookup::TextureLookup;
+use crate::flyout_actions::FlyoutActionStorage;
 use crate::tile_map::TileMap;
 
 pub enum Transition {
@@ -31,6 +31,6 @@ pub trait InputState: Send {
     cameras: &ReadStorage<'a, Camera>,
     transforms: &ReadStorage<'a, Transform>,
     screen_dimensions: &ReadExpect<'a, ScreenDimensions>,
-    texture_lookup: &Read<'a, TextureLookup>,
+    flyout_action_storage: &Read<'a, FlyoutActionStorage>,
   ) -> Transition;
 }

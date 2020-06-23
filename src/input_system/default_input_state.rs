@@ -13,7 +13,7 @@ use amethyst::{
 
 use super::flyout_input_state::FlyoutInputState;
 use super::input_state_trait::{EventType, InputState, Transition};
-use crate::texture_lookup::TextureLookup;
+use crate::flyout_actions::{EntityType, FlyoutActionStorage};
 use crate::tile_map::{TileMap, TileType};
 
 pub struct DefaultInputState;
@@ -29,7 +29,7 @@ impl<'b> InputState for DefaultInputState {
     cameras: &ReadStorage<'a, Camera>,
     transforms: &ReadStorage<'a, Transform>,
     screen_dimensions: &ReadExpect<'a, ScreenDimensions>,
-    texture_lookup: &Read<'a, TextureLookup>,
+    flyout_actions: &Read<'a, FlyoutActionStorage>,
   ) -> Transition {
     match event {
       EventType::MouseButtonPressed(MouseButton::Left) => {
@@ -48,9 +48,9 @@ impl<'b> InputState for DefaultInputState {
                 let flyout_input_state = Box::new(FlyoutInputState::new(
                   entities,
                   updater,
-                  texture_lookup,
                   index,
                   rect,
+                  flyout_actions.get_actions(&EntityType::Tile(TileType::Slot)),
                 ));
                 return Transition::PushState(flyout_input_state);
               }

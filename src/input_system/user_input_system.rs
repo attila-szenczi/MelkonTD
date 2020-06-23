@@ -14,7 +14,7 @@ use amethyst::{
 
 use super::default_input_state::DefaultInputState;
 use super::input_state_trait::{EventType, InputState, Transition};
-use crate::texture_lookup::TextureLookup;
+use crate::flyout_actions::FlyoutActionStorage;
 use crate::tile_map::TileMap;
 
 #[derive(SystemDesc)]
@@ -44,7 +44,7 @@ impl<'a> System<'a> for UserInputSystem {
     ReadStorage<'a, Camera>,
     ReadStorage<'a, Transform>,
     ReadExpect<'a, ScreenDimensions>,
-    Read<'a, TextureLookup>,
+    Read<'a, FlyoutActionStorage>,
   );
 
   fn run(
@@ -60,7 +60,7 @@ impl<'a> System<'a> for UserInputSystem {
       camera_storage,
       transform_storage,
       screen_dimensions,
-      texture_lookup,
+      flyout_action_storage,
     ): Self::SystemData,
   ) {
     let state = self.state_stack.last_mut().unwrap();
@@ -78,7 +78,7 @@ impl<'a> System<'a> for UserInputSystem {
             &camera_storage,
             &transform_storage,
             &screen_dimensions,
-            &texture_lookup,
+            &flyout_action_storage,
           );
         }
         _ => (),

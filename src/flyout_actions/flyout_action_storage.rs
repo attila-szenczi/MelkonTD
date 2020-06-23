@@ -1,23 +1,21 @@
-use amethyst::core::math::Vector3;
 use amethyst::ecs::World;
-use amethyst::renderer::SpriteRender;
 
 use std::collections::HashMap;
 
-use crate::load_image::load_sprites;
 use crate::texture_lookup::SpriteRenderWithDefaultScale;
 use crate::tile_map::TileType;
-use crate::tower::TowerType;
+//use crate::tower::TowerType;
 use utils::rect::Rect;
 
-pub type FlyoutFuncType = Box<dyn Fn(&mut World, i32, &Rect) + Send + Sync>;
+pub type FlyoutFuncType = fn(&mut World, i32, Rect);
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone)]
 pub enum EntityType {
   Tile(TileType),
   //Tower(TowerType),
 }
 
+#[derive(Clone)]
 pub struct FlyoutAction {
   pub icon: SpriteRenderWithDefaultScale,
   //clicked_tile_index: i32, clicked_tile_rect: Rect
@@ -30,18 +28,13 @@ impl FlyoutAction {
   }
 }
 
-pub enum FlyoutOption {
-  //Locked(SpriteRender), //Sign the user that there is an option which is not yet available.
-  Action(FlyoutAction),
-}
-
 #[derive(Default)]
 pub struct FlyoutActionStorage {
-  actions: HashMap<EntityType, Vec<FlyoutOption>>,
+  actions: HashMap<EntityType, Vec<FlyoutAction>>,
 }
 
 impl FlyoutActionStorage {
-  pub fn insert(&mut self, entity_type: EntityType, action: FlyoutOption) {
+  pub fn insert(&mut self, entity_type: EntityType, action: FlyoutAction) {
     let options = self.actions.entry(entity_type).or_default();
     options.push(action);
     assert!(
@@ -57,7 +50,7 @@ impl FlyoutActionStorage {
     self.actions.clear();
   }
 
-  pub fn get_actions(&self, entity_type: EntityType) -> &Vec<FlyoutOption> {
-    self.actions.get(&entity_type).unwrap()
+  pub fn get_actions(&self, entity_type: &EntityType) -> Vec<FlyoutAction> {
+    self.actions.get(&entity_type).unwrap().clone()
   }
 }

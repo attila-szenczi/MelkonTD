@@ -12,9 +12,8 @@ use amethyst::{
 };
 
 use super::input_state_trait::{EventType, InputState, Transition};
-use crate::texture_lookup::TextureLookup;
+use crate::flyout_actions::{FlyoutAction, FlyoutActionStorage};
 use crate::tile_map::TileMap;
-use crate::tower::{ElectricMageTower, Tower, TowerType};
 use crate::z_layer::z_layer_to_coordinate;
 use crate::z_layer::ZLayer;
 use utils::coord::Coord;
@@ -25,15 +24,16 @@ pub struct FlyoutInputState {
   pub clicked_tile_rect: Rect,
   pub flyout_entity: Entity,
   pub flyout_rect: Rect,
+  pub flyout_actions: Vec<FlyoutAction>,
 }
 
 impl FlyoutInputState {
   pub fn new<'a>(
     entities: &Entities<'a>,
     updater: &Read<'a, LazyUpdate>,
-    texture_lookup: &Read<'a, TextureLookup>,
     clicked_tile_index: i32,
     clicked_tile_rect: Rect,
+    flyout_actions: Vec<FlyoutAction>,
   ) -> Self {
     let mut transform = Transform::default();
 
@@ -47,12 +47,16 @@ impl FlyoutInputState {
       z_layer_to_coordinate(ZLayer::UiFlyout),
     );
 
+    //TODO: Generalize for N action
+    let flyout_action = &flyout_actions[0];
+
+    transform.set_scale(flyout_action.icon.default_scale);
+
     let flyout_entity = updater
       .create_entity(&entities)
-      .with(texture_lookup.get_texture("sprites/build_tower", 0))
+      .with(flyout_action.icon.sprite_render.clone())
       .with(transform)
       .build();
-
     let flyout_rect = Rect::new(
       Coord::new(
         clicked_tile_rect.bottom_left.x + (dimension_diff / 2.) as i32,
@@ -67,6 +71,7 @@ impl FlyoutInputState {
       clicked_tile_rect,
       flyout_entity,
       flyout_rect,
+      flyout_actions,
     }
   }
 }
@@ -76,13 +81,13 @@ impl<'b> InputState for FlyoutInputState {
     &mut self,
     event: &EventType,
     input_handler: &Read<'a, InputHandler<StringBindings>>,
-    tile_map: &mut WriteExpect<'a, TileMap>,
+    _tile_map: &mut WriteExpect<'a, TileMap>,
     entities: &Entities<'a>,
     updater: &Read<'a, LazyUpdate>,
     cameras: &ReadStorage<'a, Camera>,
     transforms: &ReadStorage<'a, Transform>,
     screen_dimensions: &ReadExpect<'a, ScreenDimensions>,
-    texture_lookup: &Read<'a, TextureLookup>,
+    _flyout_action_storage: &Read<'a, FlyoutActionStorage>,
   ) -> Transition {
     match event {
       EventType::MouseButtonPressed(MouseButton::Left) => {
@@ -101,32 +106,17 @@ impl<'b> InputState for FlyoutInputState {
           };
           if let Some(world_point) = world_point {
             if self.flyout_rect.is_in(world_point.x, world_point.y) {
-              let mut transform = Transform::default();
-              transform.set_translation_xyz(
-                self.clicked_tile_rect.left() as f32 + 25.,
-                self.clicked_tile_rect.bottom() as f32 + 25.,
-                z_layer_to_coordinate(ZLayer::Tower),
-              );
-
-              let projectile_sprite_render_with_scale = texture_lookup
-                .get_texture_with_default_scale("private_sprites/pulsing_electric_ball");
-              let entity = updater
-                .create_entity(&entities)
-                .with(texture_lookup.get_texture("sprites/tower", 0))
-                .with(transform)
-                .with(Tower::new(
-                  Box::new(ElectricMageTower::new(
-                    projectile_sprite_render_with_scale.sprite_render,
-                    projectile_sprite_render_with_scale.default_scale,
-                  )),
-                  TowerType::ElectricMageTower,
-                ))
-                .build();
+              let clicked_tile_index = self.clicked_tile_index.clone();
+              let clicked_tile_rect = self.clicked_tile_rect.clone();
+              let flyout_action = self.flyout_actions[0].clone();
+              updater.exec_mut(move |world| {
+                (flyout_action.action)(world, clicked_tile_index, clicked_tile_rect);
+              });
 
               entities
                 .delete(self.flyout_entity)
                 .expect("failed to delete flyout");
-              tile_map.occupy_slot(self.clicked_tile_index, entity);
+
               return Transition::PopState;
             } else {
               entities

@@ -5,9 +5,7 @@ use amethyst::{
 
 use log::info;
 
-use crate::flyout_actions::{
-  build_electric_mage_tower_action, EntityType, FlyoutAction, FlyoutActionStorage, FlyoutOption,
-};
+use crate::flyout_actions::{build_electric_mage_tower_action, EntityType, FlyoutActionStorage};
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 use crate::{
   game_state::GameState,
@@ -131,16 +129,6 @@ fn init_texture_lookup(world: &mut World) {
   );
   texture_lookup.insert(
     world,
-    "sprites/build_tower",
-    1,
-    32,
-    32,
-    32,
-    32,
-    z_layer_to_coordinate(ZLayer::UiFlyout),
-  );
-  texture_lookup.insert(
-    world,
     "private_sprites/pulsing_electric_ball",
     8,
     512,
@@ -169,7 +157,7 @@ fn fill_flyout_actions(world: &mut World) {
     let texture_lookup = world.read_resource::<TextureLookup>();
     action_storage.insert(
       EntityType::Tile(TileType::Slot),
-      FlyoutOption::Action(build_electric_mage_tower_action(&texture_lookup)),
+      build_electric_mage_tower_action(&texture_lookup),
     );
   }
   world.insert(action_storage);

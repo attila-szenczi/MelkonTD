@@ -1,5 +1,6 @@
 use crate::coord::Coord;
 
+#[derive(Clone)]
 pub struct Rect {
   pub bottom_left: Coord,
   pub width: i32,
@@ -26,11 +27,9 @@ impl Rect {
   pub fn bottom(&self) -> i32 {
     self.bottom_left.y
   }
-  
   pub fn top(&self) -> i32 {
     self.bottom_left.y + self.height
   }
-
 
   //TODO: make it templated
   pub fn is_in(&self, x: f32, y: f32) -> bool {

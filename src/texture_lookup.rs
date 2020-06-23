@@ -6,6 +6,7 @@ use std::collections::HashMap;
 
 use crate::load_image::load_sprites;
 
+#[derive(Clone)]
 pub struct SpriteRenderWithDefaultScale {
   pub sprite_render: SpriteRender,
   pub default_scale: Vector3<f32>,

@@ -1,5 +1,5 @@
 pub use self::flyout_action_storage::{
-  EntityType, FlyoutAction, FlyoutActionStorage, FlyoutOption,
+  EntityType, FlyoutAction, FlyoutActionStorage,
 };
 
 pub use self::build_actions::build_electric_mage_tower_action;

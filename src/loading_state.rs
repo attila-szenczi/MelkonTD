@@ -5,7 +5,9 @@ use amethyst::{
 
 use log::info;
 
-use crate::flyout_actions::{build_electric_mage_tower_action, EntityType, FlyoutActionStorage};
+use crate::flyout_actions::{
+  build_electric_mage_tower_action, build_locked_action, EntityType, FlyoutActionStorage,
+};
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 use crate::{
   game_state::GameState,
@@ -143,8 +145,18 @@ fn init_texture_lookup(world: &mut World) {
     1,
     512,
     512,
-    32,
-    32,
+    24,
+    24,
+    z_layer_to_coordinate(ZLayer::UiFlyout),
+  );
+  texture_lookup.insert(
+    world,
+    "sprites/locked_icon",
+    1,
+    64,
+    64,
+    24,
+    24,
     z_layer_to_coordinate(ZLayer::UiFlyout),
   );
   //texture_lookup.insert(data.world, "sprites/tiles", 3, 50, 50);
@@ -158,6 +170,18 @@ fn fill_flyout_actions(world: &mut World) {
     action_storage.insert(
       EntityType::Tile(TileType::Slot),
       build_electric_mage_tower_action(&texture_lookup),
+    );
+    action_storage.insert(
+      EntityType::Tile(TileType::Slot),
+      build_locked_action(&texture_lookup),
+    );
+    action_storage.insert(
+      EntityType::Tile(TileType::Slot),
+      build_locked_action(&texture_lookup),
+    );
+    action_storage.insert(
+      EntityType::Tile(TileType::Slot),
+      build_locked_action(&texture_lookup),
     );
   }
   world.insert(action_storage);

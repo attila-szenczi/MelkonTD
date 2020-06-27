@@ -16,14 +16,14 @@ use crate::flyout_actions::{FlyoutAction, FlyoutActionStorage};
 use crate::tile_map::TileMap;
 use crate::z_layer::z_layer_to_coordinate;
 use crate::z_layer::ZLayer;
-use utils::coord::Coord;
+use utils::coord::{Coord, Vector2};
 use utils::rect::Rect;
 
 pub struct FlyoutInputState {
   pub clicked_tile_index: i32,
   pub clicked_tile_rect: Rect,
-  pub flyout_entity: Entity,
-  pub flyout_rect: Rect,
+  pub flyout_entities: Vec<Entity>,
+  pub flyout_rects: Vec<Rect>,
   pub flyout_actions: Vec<FlyoutAction>,
 }
 
@@ -35,42 +35,53 @@ impl FlyoutInputState {
     clicked_tile_rect: Rect,
     flyout_actions: Vec<FlyoutAction>,
   ) -> Self {
-    let mut transform = Transform::default();
-
     let tile_dimension = clicked_tile_rect.width as f32;
-    let flyout_dimension = 32.;
+    let flyout_dimension = 24.;
     let dimension_diff = tile_dimension - flyout_dimension;
 
-    transform.set_translation_xyz(
-      clicked_tile_rect.bottom_left.x as f32 + tile_dimension / 2.,
-      clicked_tile_rect.bottom_left.y as f32 + tile_dimension * 3. / 2. - dimension_diff / 2.,
-      z_layer_to_coordinate(ZLayer::UiFlyout),
-    );
+    let flyout_transform_vectors = create_flyout_transform_vectors(flyout_actions.len() as i32);
+    let mut flyout_entities = Vec::new();
+    let mut flyout_rects = Vec::new();
+    for (i, action) in flyout_actions.iter().enumerate() {
+      let mut transform = Transform::default();
+      transform.set_translation_xyz(
+        clicked_tile_rect.bottom_left.x as f32
+          + tile_dimension / 2.
+          + flyout_transform_vectors[i].x,
+        clicked_tile_rect.bottom_left.y as f32
+          + tile_dimension / 2.
+          + flyout_transform_vectors[i].y,
+        z_layer_to_coordinate(ZLayer::UiFlyout),
+      );
+      transform.set_scale(action.icon.default_scale);
 
-    //TODO: Generalize for N action
-    let flyout_action = &flyout_actions[0];
+      flyout_entities.push(
+        updater
+          .create_entity(&entities)
+          .with(action.icon.sprite_render.clone())
+          .with(transform)
+          .build(),
+      );
 
-    transform.set_scale(flyout_action.icon.default_scale);
-
-    let flyout_entity = updater
-      .create_entity(&entities)
-      .with(flyout_action.icon.sprite_render.clone())
-      .with(transform)
-      .build();
-    let flyout_rect = Rect::new(
-      Coord::new(
-        clicked_tile_rect.bottom_left.x + (dimension_diff / 2.) as i32,
-        clicked_tile_rect.bottom_left.y + tile_dimension as i32,
-      ),
-      clicked_tile_rect.width - dimension_diff as i32,
-      clicked_tile_rect.height - dimension_diff as i32,
-    );
+      flyout_rects.push(Rect::new(
+        Coord::new(
+          clicked_tile_rect.bottom_left.x
+            + (dimension_diff / 2.) as i32
+            + flyout_transform_vectors[i].x as i32,
+          clicked_tile_rect.bottom_left.y
+            + (dimension_diff / 2.) as i32
+            + flyout_transform_vectors[i].y as i32,
+        ),
+        clicked_tile_rect.width - dimension_diff as i32,
+        clicked_tile_rect.height - dimension_diff as i32,
+      ));
+    }
 
     FlyoutInputState {
       clicked_tile_index,
       clicked_tile_rect,
-      flyout_entity,
-      flyout_rect,
+      flyout_entities,
+      flyout_rects,
       flyout_actions,
     }
   }
@@ -105,25 +116,30 @@ impl<'b> InputState for FlyoutInputState {
             }
           };
           if let Some(world_point) = world_point {
-            if self.flyout_rect.is_in(world_point.x, world_point.y) {
-              let clicked_tile_index = self.clicked_tile_index.clone();
-              let clicked_tile_rect = self.clicked_tile_rect.clone();
-              let flyout_action = self.flyout_actions[0].clone();
-              updater.exec_mut(move |world| {
-                (flyout_action.action)(world, clicked_tile_index, clicked_tile_rect);
-              });
+            for (i, action) in self.flyout_actions.iter().enumerate() {
+              if self.flyout_rects[i].is_in(world_point.x, world_point.y) {
+                let clicked_tile_index = self.clicked_tile_index.clone();
+                let clicked_tile_rect = self.clicked_tile_rect.clone();
+                let flyout_action = action.clone();
+                updater.exec_mut(move |world| {
+                  (flyout_action.action)(world, clicked_tile_index, clicked_tile_rect);
+                });
 
-              entities
-                .delete(self.flyout_entity)
-                .expect("failed to delete flyout");
+                for entity in &self.flyout_entities {
+                  entities
+                    .delete(entity.clone())
+                    .expect("failed to delete flyout");
+                }
 
-              return Transition::PopState;
-            } else {
-              entities
-                .delete(self.flyout_entity)
-                .expect("failed to delete flyout");
-              return Transition::PopState;
+                return Transition::PopState;
+              }
             }
+            for entity in &self.flyout_entities {
+              entities
+                .delete(entity.clone())
+                .expect("failed to delete flyout");
+            }
+            return Transition::PopState;
           }
         }
       }
@@ -131,4 +147,44 @@ impl<'b> InputState for FlyoutInputState {
     }
     Transition::KeepState
   }
+}
+
+fn create_flyout_transform_vectors(len: i32) -> Vec<Vector2> {
+  let mut result = Vec::new();
+  match len {
+    0 => result,
+    1 => {
+      result.push(create_transform_vector(0.));
+      result
+    }
+    2 => {
+      result.push(create_transform_vector(30.));
+      result.push(create_transform_vector(-30.));
+      result
+    }
+    3 => {
+      result.push(create_transform_vector(45.));
+      result.push(create_transform_vector(0.));
+      result.push(create_transform_vector(-45.));
+      result
+    }
+
+    4 => {
+      result.push(create_transform_vector(75.));
+      result.push(create_transform_vector(30.));
+      result.push(create_transform_vector(-30.));
+      result.push(create_transform_vector(-75.));
+      result
+    }
+    _ => panic!("only 4 action is supported"),
+  }
+}
+
+fn create_transform_vector(angle: f32) -> Vector2 {
+  let mut direction_vec = Vector2::new_unit_vector_up();
+  direction_vec.rotate_ccw(angle);
+  direction_vec.x *= 40.;
+  direction_vec.y *= 40.;
+
+  direction_vec
 }

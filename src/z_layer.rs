@@ -1,8 +1,10 @@
 pub enum ZLayer {
-  TileMap = 0,
+  TileMap = 0, //Currently invisible, will be completely removed
+  Background,
   Minion,
   Tower,
   HealthBarBack,
+  HealthBarMiddle,
   HealthBarFront,
   Projectile,
   UiFlyout,

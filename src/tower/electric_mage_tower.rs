@@ -34,7 +34,7 @@ impl ElectricMageTower {
       target: None,
       damage: 10,
       firing_timer: 1.,
-      range: 70.,
+      range: 150.,
       sprite_render,
       sprite_scale,
       charging_projectile: None,
@@ -60,8 +60,8 @@ impl ElectricMageTower {
   ) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(
-      tower_translation.x as f32,
-      tower_translation.y as f32 + 20.,
+      tower_translation.x as f32 - 10.,
+      tower_translation.y as f32 + 80.,
       z_layer_to_coordinate(ZLayer::Projectile),
     );
     transform.set_scale(Vector3::new(

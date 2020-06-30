@@ -54,7 +54,7 @@ impl TileMap {
   pub fn occupy_slot(&mut self, index: i32, entity: Entity) {
     match self.tiles.get(index as usize).unwrap() {
       TileType::Slot => self.tiles[index as usize] = TileType::Tower(entity),
-      _ => panic!("Selected tile is not a slot"),
+      _ => (), //panic!("Selected tile is not a slot"),
     }
   }
 

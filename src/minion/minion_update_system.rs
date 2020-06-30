@@ -26,7 +26,7 @@ impl<'a> System<'a> for MinionUpdateSystem {
 
   fn run(&mut self, (entities, minions, mut transforms, time, hierarchy_lookup): Self::SystemData) {
     for (_minion, transform) in (&minions, &mut transforms).join() {
-      transform.prepend_translation_y(-50. * time.delta_seconds());
+      transform.prepend_translation_x(50. * time.delta_seconds());
     }
 
     for (entity, minion) in (&entities, &minions).join() {

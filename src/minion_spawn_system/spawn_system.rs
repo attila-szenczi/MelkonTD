@@ -16,8 +16,8 @@ use crate::{
   z_layer::{z_layer_to_coordinate, ZLayer},
 };
 
-const SPAWN_POINT_X: f32 = 425.;
-const SPAWN_POINT_Y: f32 = 525.;
+const SPAWN_POINT_X: f32 = -50.;
+const SPAWN_POINT_Y: f32 = 230.;
 
 #[derive(SystemDesc)]
 pub struct MinionSpawnSystem {
@@ -57,7 +57,7 @@ impl MinionSpawnSystem {
     rect_key: &str,
   ) {
     let mut transform_healthbar_outline = Transform::default();
-    transform_healthbar_outline.set_translation_xyz(0., 40., z_layer_to_coordinate(z_layer));
+    transform_healthbar_outline.set_translation_xyz(0., 80., z_layer_to_coordinate(z_layer));
     let scale = transform_healthbar_outline.scale_mut();
     scale.x = x_scale;
     scale.y = y_scale;
@@ -89,13 +89,17 @@ impl<'a> System<'a> for MinionSpawnSystem {
   ) {
     self.counter += 1;
 
-    if self.counter == 30 {
+    if self.counter == 40 {
       let mut transform = Transform::default();
       transform.set_translation_xyz(
         SPAWN_POINT_X,
         SPAWN_POINT_Y,
         z_layer_to_coordinate(ZLayer::Minion),
       );
+
+      let scale = transform.scale_mut();
+      scale.x = 0.5;
+      scale.y = 0.5;
 
       let entity = updater
         .create_entity(&entities)
@@ -121,7 +125,7 @@ impl<'a> System<'a> for MinionSpawnSystem {
         2.,
         0.5,
         entity,
-        ZLayer::HealthBarBack,
+        ZLayer::HealthBarMiddle,
         &entities,
         &updater,
         &mut hierarchy_lookup,

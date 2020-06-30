@@ -28,7 +28,7 @@ pub fn build_electric_mage_tower_action<'a>(texture_lookup: &TextureLookup) -> F
 
     let texture = {
       let inner_texture_lookup = world.read_resource::<TextureLookup>();
-      inner_texture_lookup.get_texture("sprites/tower", 0)
+      inner_texture_lookup.get_texture("private_sprites/electric_tower", 0)
     };
 
     let projectile_sprite_render_with_scale = {

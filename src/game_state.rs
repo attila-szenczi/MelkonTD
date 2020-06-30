@@ -16,6 +16,7 @@ use log::info;
 
 use crate::tower::TowerUpdateSystem;
 use crate::{
+  flyout_actions::{EntityType, FlyoutActionStorage},
   input_system::UserInputSystem,
   load_image::load_sprites,
   minion::MinionDeathSystem,
@@ -28,6 +29,8 @@ use crate::{
   tile_map::{TileMap, TileType},
   z_layer::{z_layer_to_coordinate, ZLayer},
 };
+use utils::coord::Coord;
+use utils::rect::Rect;
 
 #[derive(Default)]
 pub struct GameState<'a, 'b> {
@@ -101,10 +104,12 @@ impl<'a, 'b> SimpleState for GameState<'a, 'b> {
 
     let dimensions = (*data.world.read_resource::<ScreenDimensions>()).clone();
 
-    init_camera(data.world, &dimensions);
+    init_background(data.world, &dimensions);
 
+    init_camera(data.world, &dimensions);
     let sprites = load_sprites(data.world, "sprites/tiles", 3);
     init_sprites(data.world, &sprites, &dimensions);
+    init_towers(data.world);
   }
 
   fn handle_event(
@@ -213,7 +218,7 @@ fn create_minion_spawn_system(world: &World) -> MinionSpawnSystem {
   let texture_lookup = world.read_resource::<TextureLookup>();
 
   MinionSpawnSystem::new(
-    texture_lookup.get_texture("sprites/minion", 0),
+    texture_lookup.get_texture("private_sprites/5_enemies_1_attack_018", 0),
     texture_lookup.get_texture("sprites/healthbar_back", 0),
     texture_lookup.get_texture("sprites/healthbar_front", 0),
     texture_lookup.get_texture("sprites/healthbar_outline", 0),
@@ -225,4 +230,34 @@ fn create_user_input_system(world: &World) -> UserInputSystem {
     .fetch_mut::<EventChannel<InputEvent<StringBindings>>>()
     .register_reader();
   UserInputSystem::new(reader_id)
+}
+
+fn init_background(world: &mut World, dimensions: &ScreenDimensions) {
+  let mut transform = Transform::default();
+  transform.set_translation_xyz(
+    dimensions.width() * 0.5,
+    dimensions.height() * 0.5,
+    z_layer_to_coordinate(ZLayer::Background),
+  );
+  let sprite_render = {
+    let textures = world.read_resource::<TextureLookup>();
+    textures.get_texture("private_sprites/game_background_1", 0)
+  };
+  world
+    .create_entity()
+    .with(sprite_render)
+    .with(transform)
+    .build();
+}
+
+fn init_towers(world: &mut World) {
+  let actions = {
+    let action_storage = world.read_resource::<FlyoutActionStorage>();
+    action_storage.get_actions(&EntityType::Tile(TileType::Slot))
+  };
+  println!("size of actions {}", actions.len());
+  let rect = Rect::new(Coord::new(540, 100), 177, 180);
+  (actions[0].action)(world, 0, rect);
+  let rect2 = Rect::new(Coord::new(140, 100), 177, 180);
+  (actions[0].action)(world, 0, rect2);
 }

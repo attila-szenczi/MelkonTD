@@ -71,12 +71,12 @@ fn init_texture_lookup(world: &mut World) {
 
   texture_lookup.insert(
     world,
-    "sprites/minion",
+    "private_sprites/5_enemies_1_attack_018",
     1,
-    50,
-    50,
-    50,
-    50,
+    292,
+    248,
+    146,
+    124,
     z_layer_to_coordinate(ZLayer::Minion),
   );
   texture_lookup.insert(
@@ -111,12 +111,12 @@ fn init_texture_lookup(world: &mut World) {
   );
   texture_lookup.insert(
     world,
-    "sprites/tower",
+    "private_sprites/electric_tower",
     1,
-    50,
-    50,
-    50,
-    50,
+    177,
+    180,
+    177,
+    180,
     z_layer_to_coordinate(ZLayer::Tower),
   );
   texture_lookup.insert(
@@ -135,8 +135,8 @@ fn init_texture_lookup(world: &mut World) {
     8,
     512,
     512,
-    32,
-    32,
+    64,
+    64,
     z_layer_to_coordinate(ZLayer::Projectile),
   );
   texture_lookup.insert(
@@ -158,6 +158,16 @@ fn init_texture_lookup(world: &mut World) {
     24,
     24,
     z_layer_to_coordinate(ZLayer::UiFlyout),
+  );
+  texture_lookup.insert(
+    world,
+    "private_sprites/game_background_1",
+    1,
+    1920,
+    1080,
+    1920,
+    1080,
+    z_layer_to_coordinate(ZLayer::Background),
   );
   //texture_lookup.insert(data.world, "sprites/tiles", 3, 50, 50);
   world.insert(texture_lookup);

@@ -1,7 +1,7 @@
 
 This is a learning project aiming to learn Rust.
 
-I use the Amethyst game engine.
+Currently i use the [Amethyst](https://amethyst.rs/) game engine, but working on the switch to [SFML](https://www.sfml-dev.org/).
 
 The project's scope is not yet decided, it can be anything in this range:
 - Simple desktop Tower defense/Anti-tower defense

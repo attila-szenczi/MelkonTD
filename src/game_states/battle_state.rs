@@ -1,6 +1,11 @@
-use sfml::window::{Event, Window};
+use std::ops::Deref;
+
+use sfml::graphics::{RenderStates, RenderTarget, RenderWindow, Sprite};
+use sfml::window::Event;
 
 use super::game_state_trait::{GameState, Transition};
+
+use crate::world::World;
 
 pub struct BattleState;
 
@@ -11,7 +16,7 @@ impl BattleState {
 }
 
 impl<'b> GameState for BattleState {
-  fn run(&mut self, window: &mut Window) -> Transition {
+  fn run(&mut self, window: &mut RenderWindow, world: &mut World) -> Transition {
     // match event {
     //   EventType::MouseButtonPressed(MouseButton::Left) => {
     //     if let Some((x, y)) = input_handler.mouse_position() {
@@ -42,13 +47,21 @@ impl<'b> GameState for BattleState {
     //   }
     //   _ => (),
     // }
-    while window.is_open() {
-      // Event processing
-      while let Some(event) = window.poll_event() {
-        // Request closing for the window
-        if event == Event::Closed {
-          window.close();
-        }
+    let texture = &world.texture_storage.get_texture_data("background").texture;
+
+    let sprite = Sprite::with_texture(texture.deref());
+
+    window.set_active(true);
+    window.draw_sprite(&sprite, RenderStates::default());
+    window.display();
+
+    // Event processing
+    while let Some(event) = window.poll_event() {
+      // Request closing for the window
+      match event {
+        Event::Closed => window.close(),
+        Event::MouseButtonPressed { button, x, y } => println!("Left click"),
+        _ => (),
       }
     }
 

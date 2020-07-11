@@ -1,4 +1,6 @@
-use sfml::window::Window;
+use sfml::graphics::RenderWindow;
+
+use crate::world::World;
 
 pub enum Transition {
   KeepState,
@@ -8,5 +10,5 @@ pub enum Transition {
 }
 
 pub trait GameState: Send {
-  fn run(&mut self, window: &mut Window) -> Transition;
+  fn run(&mut self, window: &mut RenderWindow, world: &mut World) -> Transition;
 }

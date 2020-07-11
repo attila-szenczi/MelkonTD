@@ -1,7 +1,9 @@
-use sfml::window::{Event, Window};
+use sfml::window::Event;
 
 use super::battle_state::BattleState;
 use super::game_state_trait::{GameState, Transition};
+use crate::world::World;
+use sfml::graphics::RenderWindow;
 
 pub struct LoadingState;
 
@@ -12,48 +14,42 @@ impl LoadingState {
 }
 
 impl<'b> GameState for LoadingState {
-  fn run(&mut self, window: &mut Window) -> Transition {
-    // match event {
-    //   EventType::MouseButtonPressed(MouseButton::Left) => {
-    //     if let Some((x, y)) = input_handler.mouse_position() {
-    //       if let Some((camera, transform)) = (cameras, transforms).join().next() {
-    //         let center_screen = Point3::new(x, y, 0.0);
+  fn run(&mut self, window: &mut RenderWindow, world: &mut World) -> Transition {
+    //Load assets
+    world
+      .texture_storage
+      .insert_with_key("background", "private_sprites/game_background_1.png");
 
-    //         let world_point = camera.projection().screen_to_world_point(
-    //           center_screen,
-    //           screen_dimensions.diagonal(),
-    //           &transform,
-    //         );
+    world
+      .texture_storage
+      .insert("private_sprites/5_enemies_1_attack_018.png");
+    world.texture_storage.insert("sprites/healthbar_back.png");
+    world.texture_storage.insert("sprites/healthbar_front.png");
+    world
+      .texture_storage
+      .insert("sprites/healthbar_outline.png");
+    world
+      .texture_storage
+      .insert("private_sprites/electric_tower.png");
+    world.texture_storage.insert("sprites/projectile.png");
+    world
+      .texture_storage
+      .insert("private_sprites/pulsing_electric_ball.png");
+    world
+      .texture_storage
+      .insert("sprites/electric_mage_tower_icon.png");
+    world.texture_storage.insert("sprites/locked_icon.png");
+    world
+      .texture_storage
+      .insert("private_sprites/game_background_1.png");
 
-    //         match tile_map.find_tile(world_point.x as i32, world_point.y as i32) {
-    //           Some((index, TileType::Slot, rect)) => {
-    //             let flyout_input_state = Box::new(FlyoutInputState::new(
-    //               entities,
-    //               updater,
-    //               index,
-    //               rect,
-    //               flyout_actions.get_actions(&EntityType::Tile(TileType::Slot)),
-    //             ));
-    //             return Transition::PushState(flyout_input_state);
-    //           }
-    //           _ => (),
-    //         }
-    //       }
-    //     }
-    //   }
-    //   _ => (),
-    // }
-
-    while window.is_open() {
-      // Event processing
-      while let Some(event) = window.poll_event() {
-        // Request closing for the window
-        if event == Event::Closed {
-          window.close();
-        }
+    // Event processing
+    while let Some(event) = window.poll_event() {
+      // Request closing for the window
+      if event == Event::Closed {
+        window.close();
       }
     }
-
-    Transition::PushState(Box::new(BattleState::new()))
+    return Transition::PushState(Box::new(BattleState::new()));
   }
 }

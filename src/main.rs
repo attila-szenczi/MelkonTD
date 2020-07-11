@@ -25,8 +25,10 @@ mod projectile;
 mod simple_animation;
 mod simple_animation_system;
 mod texture_lookup;
+mod texture_storage;
 mod tile_map;
 mod tower;
+mod world;
 mod z_layer;
 
 fn main() -> amethyst::Result<()> {

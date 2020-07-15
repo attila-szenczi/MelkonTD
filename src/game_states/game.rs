@@ -38,6 +38,14 @@ impl Game {
           self.state_stack.push(state);
           ()
         }
+        Transition::ReplaceState(state) => {
+          self.state_stack.pop();
+          self.state_stack.push(state);
+          ()
+        }
+        Transition::Quit => {
+          return ();
+        }
       }
     }
   }

@@ -121,16 +121,6 @@ fn init_texture_lookup(world: &mut World) {
   );
   texture_lookup.insert(
     world,
-    "sprites/projectile",
-    1,
-    16,
-    16,
-    16,
-    16,
-    z_layer_to_coordinate(ZLayer::Projectile),
-  );
-  texture_lookup.insert(
-    world,
     "private_sprites/pulsing_electric_ball",
     8,
     512,

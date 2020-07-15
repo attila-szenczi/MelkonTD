@@ -1,8 +1,9 @@
 use std::collections::HashMap;
+use std::ops::Deref;
 use std::path::PathBuf;
 
-use sfml::graphics::Texture;
-use sfml::system::SfBox;
+use sfml::graphics::{IntRect, Sprite, Texture};
+use sfml::system::{SfBox, Vector2u};
 
 // #[derive(Clone)]
 // pub struct SpriteRenderWithDefaultScale {
@@ -11,7 +12,9 @@ use sfml::system::SfBox;
 // }
 
 pub struct TextureData {
-  pub texture: SfBox<Texture>, //TODO sprites?
+  pub texture: SfBox<Texture>,
+  pub sprite_rects: Vec<IntRect>, //Only filled in case there are multiple sprites
+  pub scale: f32,
 }
 
 pub struct TextureStorage {
@@ -34,43 +37,57 @@ impl TextureStorage {
     path.push(filepath);
     println!("Path: {}", path.as_path().to_str().unwrap());
     let texture = Texture::from_file(path.to_str().unwrap()).unwrap();
-    self
-      .textures
-      .insert(String::from(key), TextureData { texture: texture });
+    self.textures.insert(
+      String::from(key),
+      TextureData {
+        texture: texture,
+        sprite_rects: vec![],
+        scale: 1., //TODO: If it will be used outside of background it might not be good
+      },
+    );
   }
 
   pub fn insert(
     &mut self,
-    //world: &mut World,
     filepath: &str,
-    // sprite_count: i32,
-    // width: i32,
-    // height: i32,
-    // default_in_game_width: i32,
-    // default_in_game_height: i32,
-    // z_coordinate: f32,
+    default_width: i32, //Unified scale is expected for simplicity
   ) {
     let mut path = self.working_dir.clone();
     path.push(filepath);
     let texture = Texture::from_file(path.to_str().unwrap()).unwrap();
-    // let sprite_renders = load_sprites(world, filepath_without_extension, sprite_count);
-
-    // let default_scale = Vector3::new(
-    //   default_in_game_width as f32 / width as f32,
-    //   default_in_game_height as f32 / height as f32,
-    //   z_coordinate,
-    // );
+    //TODO: Create sprites
+    let scale = default_width as f32 / texture.size().x as f32;
     self.textures.insert(
       String::from(filepath),
       TextureData {
         texture: texture,
-        // sprite_count,
-        // width,
-        // height,
-        //default_scale,
+        sprite_rects: vec![],
+        scale,
       },
     );
-    // );
+  }
+
+  pub fn insert_sprite_sheet(
+    &mut self,
+    filepath: &str,
+    default_sprite_width: i32,
+    columns: i32,
+    rows: i32,
+  ) {
+    let mut path = self.working_dir.clone();
+    path.push(filepath);
+    let texture = Texture::from_file(path.to_str().unwrap()).unwrap();
+
+    let sprite_rects = create_sprite_rects(columns, rows, texture.size());
+    let scale = default_sprite_width as f32 / (texture.size().x as f32 / columns as f32);
+    self.textures.insert(
+      String::from(filepath),
+      TextureData {
+        texture: texture,
+        sprite_rects,
+        scale,
+      },
+    );
   }
 
   pub fn get_texture_data(&self, key: &str) -> &TextureData {
@@ -100,4 +117,21 @@ impl TextureStorage {
   //   );
   //   (sprite_render, vec)
   // }
+}
+
+fn create_sprite_rects(columns: i32, rows: i32, image_dimensions: Vector2u) -> Vec<IntRect> {
+  let sprite_width = image_dimensions.x as i32 / columns;
+  let sprite_height = image_dimensions.y as i32 / rows;
+  let mut sprite_rects = Vec::new();
+  sprite_rects.reserve((columns * rows) as usize);
+
+  for row in 0..rows {
+    for column in 0..columns {
+      let start_x = sprite_width as i32 * column;
+      let start_y = sprite_height as i32 * row;
+      sprite_rects.push(IntRect::new(start_x, start_y, sprite_width, sprite_height));
+    }
+  }
+
+  sprite_rects
 }

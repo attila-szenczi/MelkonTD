@@ -5,8 +5,11 @@ use crate::world::World;
 pub enum Transition {
   KeepState,
   #[allow(dead_code)]
-  PopState,
-  PushState(Box<dyn GameState>),
+  PopState, // For PauseState
+  #[allow(dead_code)]
+  PushState(Box<dyn GameState>), // For PauseState
+  ReplaceState(Box<dyn GameState>),
+  Quit,
 }
 
 pub trait GameState: Send {

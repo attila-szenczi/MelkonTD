@@ -1,4 +1,5 @@
 pub use self::minion_component::Minion;
+pub use self::minion_trait::MinionTrait;
 pub use self::minion_death_system::MinionDeathSystem;
 pub use self::minion_update_system::MinionUpdateSystem;
 pub use self::test_minion::TestMinion;

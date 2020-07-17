@@ -70,7 +70,7 @@ impl TextureStorage {
   pub fn insert_sprite_sheet(
     &mut self,
     filepath: &str,
-    default_sprite_width: i32,
+    default_in_game_sprite_width: i32,
     columns: i32,
     rows: i32,
   ) {
@@ -79,7 +79,7 @@ impl TextureStorage {
     let texture = Texture::from_file(path.to_str().unwrap()).unwrap();
 
     let sprite_rects = create_sprite_rects(columns, rows, texture.size());
-    let scale = default_sprite_width as f32 / (texture.size().x as f32 / columns as f32);
+    let scale = default_in_game_sprite_width as f32 / (texture.size().x as f32 / columns as f32);
     self.textures.insert(
       String::from(filepath),
       TextureData {

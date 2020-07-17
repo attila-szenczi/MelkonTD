@@ -22,6 +22,7 @@ pub struct ElectricMageTower {
   sprite_render: SpriteRender,
   sprite_scale: Vector3<f32>,
   charging_projectile: Option<Entity>,
+  transform: Transform,
 }
 
 impl Component for ElectricMageTower {
@@ -38,6 +39,7 @@ impl ElectricMageTower {
       sprite_render,
       sprite_scale,
       charging_projectile: None,
+      transform: Transform::default(),
     }
   }
 
@@ -147,5 +149,17 @@ impl TowerTrait for ElectricMageTower {
           }
       }
     }
+  }
+  
+  fn sprite_sheet_name(&self) -> &'static str {
+    "private_sprites/electric_tower"
+  }
+
+  fn transform(&self) -> &Transform {
+    &self.transform
+  }
+
+  fn transform_mut(&mut self) -> &mut Transform {
+    &mut self.transform
   }
 }

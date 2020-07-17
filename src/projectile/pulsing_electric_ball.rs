@@ -27,6 +27,7 @@ pub struct PulsingElectricBall {
   normal_scale: Vector3<f32>,
   pulsing_state: PulsingState,
   last_direction: Option<Vector2>,
+  transform: Transform,
 }
 
 impl PulsingElectricBall {
@@ -41,6 +42,7 @@ impl PulsingElectricBall {
       normal_scale,
       pulsing_state: PulsingState::Increase,
       last_direction: None,
+      transform: Transform::default(),
     }
   }
 
@@ -184,5 +186,17 @@ impl ProjectileTrait for PulsingElectricBall {
   }
   fn set_target(&mut self, entity: Entity) {
     self.target = Some(entity);
+  }
+
+  fn sprite_sheet_name(&self) -> &'static str {
+    "private_sprites/pulsing_electric_ball.png"
+  }
+
+  fn transform(&self) -> &Transform {
+    &self.transform
+  }
+
+  fn transform_mut(&mut self) -> &mut Transform {
+    &mut self.transform
   }
 }

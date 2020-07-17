@@ -18,4 +18,8 @@ pub trait ProjectileTrait: Send + Sync {
   fn set_target(&mut self, entity: Entity);
 
   fn dead(&self) -> bool;
+  
+  fn sprite_sheet_name(&self) -> &'static str;
+  fn transform(&self) -> &Transform;
+  fn transform_mut(&mut self) -> &mut Transform;
 }

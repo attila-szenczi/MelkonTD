@@ -14,4 +14,8 @@ pub trait TowerTrait: Send + Sync {
     updater: &Read<'a, LazyUpdate>,
     elapsed: f32,
   );
+  
+  fn sprite_sheet_name(&self) -> &'static str;
+  fn transform(&self) -> &Transform;
+  fn transform_mut(&mut self) -> &mut Transform;
 }

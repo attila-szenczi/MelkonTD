@@ -11,11 +11,11 @@ pub struct TestMinion {
 }
 
 impl TestMinion {
-  pub fn new() -> Self {
+  pub fn new(position: Vector2f) -> Self {
     TestMinion {
       max_health: 20,
       health: 20,
-      position: Vector2f::default(),
+      position: position,
     }
   }
 }

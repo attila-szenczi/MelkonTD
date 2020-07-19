@@ -3,20 +3,25 @@ use sfml::window::Event;
 
 use super::game_state_trait::{GameState, Transition};
 
+use crate::minion::MinionSpawner;
 use crate::render2d::draw_world;
 use crate::world::World;
 
-pub struct BattleState;
+pub struct BattleState {
+  minion_spawner: MinionSpawner,
+}
 
 impl BattleState {
   pub fn new() -> Self {
-    BattleState {}
+    BattleState {
+      minion_spawner: MinionSpawner::new(),
+    }
   }
 }
 
 impl<'b> GameState for BattleState {
   fn run(&mut self, window: &mut RenderWindow, world: &mut World) -> Transition {
-    // minion_spawn
+    self.minion_spawner.update(world);
     // projectile update
     // minion update
     // minion death

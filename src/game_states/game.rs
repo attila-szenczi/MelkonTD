@@ -1,5 +1,5 @@
 use sfml::graphics::{FloatRect, RenderTarget, RenderWindow, View};
-use sfml::window::Style;
+use sfml::window::{ContextSettings, Style};
 
 use super::game_state_trait::{GameState, Transition};
 use super::loading_state::LoadingState;
@@ -19,8 +19,14 @@ impl Game {
   }
 
   pub fn run(&mut self) {
-    let mut window = RenderWindow::new((1920, 1080), "MelkonTD", Style::CLOSE, &Default::default());
-    window.set_framerate_limit(60);
+    let context_settings = ContextSettings {
+      antialiasing_level: 0,
+      ..Default::default()
+    };
+    let mut window = RenderWindow::new((1920, 1080), "MelkonTD", Style::CLOSE, &context_settings);
+    window.set_framerate_limit(80);
+    window.set_vertical_sync_enabled(true);
+    window.set_active(true);
     let camera = View::from_rect(&FloatRect::new(0., 0., 1920., 1080.));
     window.set_view(&camera);
 

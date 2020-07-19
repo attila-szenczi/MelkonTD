@@ -12,6 +12,6 @@ pub enum Transition {
   Quit,
 }
 
-pub trait GameState: Send {
+pub trait GameState {
   fn run(&mut self, window: &mut RenderWindow, world: &mut World) -> Transition;
 }

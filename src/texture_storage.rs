@@ -62,7 +62,8 @@ impl TextureStorage {
   ) {
     let mut path = self.working_dir.clone();
     path.push(filepath);
-    let texture = Texture::from_file(path.to_str().unwrap()).unwrap();
+    let mut texture = Texture::from_file(path.to_str().unwrap()).unwrap();
+    texture.set_smooth(true);
 
     let sprite_width = texture.size().x as i32;
     let sprite_height = texture.size().y as i32;
@@ -112,7 +113,7 @@ impl TextureStorage {
   }
 
   pub fn get_texture_data(&self, key: &str) -> &TextureData {
-    println!("Lookup texture {}", key);
+    //println!("Lookup texture {}", key);
     self.textures.get(&String::from(key)).unwrap()
   }
 

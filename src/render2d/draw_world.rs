@@ -1,3 +1,4 @@
+use sfml::graphics::Color;
 use sfml::graphics::{
   blend_mode::BlendMode, RenderStates, RenderTarget, RenderWindow, Sprite, Texture, Transformable,
 };
@@ -9,7 +10,7 @@ use crate::texture_storage::TextureData;
 use crate::world::World;
 
 pub fn draw_world(window: &mut RenderWindow, world: &mut World) {
-  window.set_active(true);
+  window.clear(Color::rgb(50, 200, 50));
 
   draw_background(window, world);
   draw_minions(window, world);
@@ -17,14 +18,15 @@ pub fn draw_world(window: &mut RenderWindow, world: &mut World) {
   //draw_healthbars(window, world);
   draw_projectiles(window, world);
   //draw_ui_elements(window, world);
+  window.set_active(true);
   window.display();
 }
 
 fn draw_sprite(window: &mut RenderWindow, texture_data: &TextureData, position: &Vector2f) {
   let mut sprite = Sprite::with_texture(&texture_data.texture);
   sprite.set_scale(Vector2f::from((texture_data.scale, texture_data.scale)));
-  sprite.set_position((position.x, position.y));
-  sprite.set_origin((texture_data.origin.x, texture_data.origin.y));
+  sprite.set_position((position.x.floor(), position.y.floor()));
+  sprite.set_origin((texture_data.origin.x.floor(), texture_data.origin.y.floor()));
 
   window.draw(&sprite);
 }

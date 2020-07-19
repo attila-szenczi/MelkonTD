@@ -10,6 +10,8 @@ use super::projectile_trait::ProjectileTrait;
 use crate::minion::Minion;
 use utils::coord::Vector2;
 
+use sfml::system::Vector2f;
+
 #[derive(PartialEq)]
 enum PulsingState {
   Increase,
@@ -27,7 +29,7 @@ pub struct PulsingElectricBall {
   normal_scale: Vector3<f32>,
   pulsing_state: PulsingState,
   last_direction: Option<Vector2>,
-  transform: Transform,
+  position: Vector2f,
 }
 
 impl PulsingElectricBall {
@@ -42,7 +44,7 @@ impl PulsingElectricBall {
       normal_scale,
       pulsing_state: PulsingState::Increase,
       last_direction: None,
-      transform: Transform::default(),
+      position: Vector2f::new(1., 1.),
     }
   }
 
@@ -192,11 +194,11 @@ impl ProjectileTrait for PulsingElectricBall {
     "private_sprites/pulsing_electric_ball.png"
   }
 
-  fn transform(&self) -> &Transform {
-    &self.transform
+  fn position(&self) -> &Vector2f {
+    &self.position
   }
 
-  fn transform_mut(&mut self) -> &mut Transform {
-    &mut self.transform
+  fn position_mut(&mut self) -> &mut Vector2f {
+    &mut self.position
   }
 }

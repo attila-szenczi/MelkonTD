@@ -3,7 +3,7 @@ use std::ops::Deref;
 use std::path::PathBuf;
 
 use sfml::graphics::{IntRect, Sprite, Texture};
-use sfml::system::{SfBox, Vector2u};
+use sfml::system::{SfBox, Vector2f, Vector2u};
 
 // #[derive(Clone)]
 // pub struct SpriteRenderWithDefaultScale {
@@ -15,6 +15,7 @@ pub struct TextureData {
   pub texture: SfBox<Texture>,
   pub sprite_rects: Vec<IntRect>, //Only filled in case there are multiple sprites
   pub scale: f32,
+  pub origin: Vector2f,
 }
 
 pub struct TextureStorage {
@@ -37,12 +38,19 @@ impl TextureStorage {
     path.push(filepath);
     println!("Path: {}", path.as_path().to_str().unwrap());
     let texture = Texture::from_file(path.to_str().unwrap()).unwrap();
+
+    //TODO: Pass origin optionally
+    let sprite_width = texture.size().x as i32;
+    let sprite_height = texture.size().y as i32;
+    let origin = Vector2f::new((sprite_width / 2) as f32, (sprite_height / 2) as f32);
+
     self.textures.insert(
       String::from(key),
       TextureData {
         texture: texture,
         sprite_rects: vec![],
         scale: 1., //TODO: If it will be used outside of background it might not be good
+        origin,
       },
     );
   }
@@ -50,11 +58,16 @@ impl TextureStorage {
   pub fn insert(
     &mut self,
     filepath: &str,
-    default_width: i32, //Unified scale is expected for simplicity
+    default_width: i32, //Unified scale is expected
   ) {
     let mut path = self.working_dir.clone();
     path.push(filepath);
     let texture = Texture::from_file(path.to_str().unwrap()).unwrap();
+
+    let sprite_width = texture.size().x as i32;
+    let sprite_height = texture.size().y as i32;
+    let origin = Vector2f::new((sprite_width / 2) as f32, (sprite_height / 2) as f32);
+
     //TODO: Create sprites
     let scale = default_width as f32 / texture.size().x as f32;
     self.textures.insert(
@@ -63,6 +76,7 @@ impl TextureStorage {
         texture: texture,
         sprite_rects: vec![],
         scale,
+        origin,
       },
     );
   }
@@ -80,17 +94,25 @@ impl TextureStorage {
 
     let sprite_rects = create_sprite_rects(columns, rows, texture.size());
     let scale = default_in_game_sprite_width as f32 / (texture.size().x as f32 / columns as f32);
+
+    //TODO: Pass origin optionally
+    let sprite_width = texture.size().x as i32 / columns;
+    let sprite_height = texture.size().y as i32 / rows;
+    let origin = Vector2f::new((sprite_width / 2) as f32, (sprite_height / 2) as f32);
+
     self.textures.insert(
       String::from(filepath),
       TextureData {
         texture: texture,
         sprite_rects,
         scale,
+        origin,
       },
     );
   }
 
   pub fn get_texture_data(&self, key: &str) -> &TextureData {
+    println!("Lookup texture {}", key);
     self.textures.get(&String::from(key)).unwrap()
   }
 

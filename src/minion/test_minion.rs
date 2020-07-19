@@ -2,12 +2,12 @@ use amethyst::ecs::{Component, DenseVecStorage};
 
 use super::minion_trait::MinionTrait;
 
-use sfml::graphics::Transform;
+use sfml::system::Vector2f;
 
 pub struct TestMinion {
   pub max_health: i32,
   pub health: i32,
-  transform: Transform,
+  position: Vector2f,
 }
 
 impl TestMinion {
@@ -15,7 +15,7 @@ impl TestMinion {
     TestMinion {
       max_health: 20,
       health: 20,
-      transform: Transform::default(),
+      position: Vector2f::default(),
     }
   }
 }
@@ -41,14 +41,14 @@ impl MinionTrait for TestMinion {
   }
 
   fn sprite_sheet_name(&self) -> &'static str {
-    "private_sprites/5_enemies_1_attack_018"
+    "private_sprites/5_enemies_1_attack_018.png"
   }
 
-  fn transform(&self) -> &Transform {
-    &self.transform
+  fn position(&self) -> &Vector2f {
+    &self.position
   }
 
-  fn transform_mut(&mut self) -> &mut Transform {
-    &mut self.transform
+  fn position_mut(&mut self) -> &mut Vector2f {
+    &mut self.position
   }
 }

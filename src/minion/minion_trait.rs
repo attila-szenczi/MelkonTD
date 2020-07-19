@@ -1,4 +1,4 @@
-use sfml::graphics::Transform;
+use sfml::system::Vector2f;
 
 //TODO: No Send + Sync after amethyst removal
 pub trait MinionTrait: Send + Sync {
@@ -9,7 +9,7 @@ pub trait MinionTrait: Send + Sync {
   fn dead(&self) -> bool;
 
   fn sprite_sheet_name(&self) -> &'static str;
-  fn transform(&self) -> &Transform;
-  fn transform_mut(&mut self) -> &mut Transform;
+  fn position(&self) -> &Vector2f;
+  fn position_mut(&mut self) -> &mut Vector2f;
   //get_animation_state
 }

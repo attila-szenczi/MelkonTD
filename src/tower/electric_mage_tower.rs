@@ -14,15 +14,15 @@ use crate::projectile::PulsingElectricBall;
 use crate::simple_animation::SimpleAnimation;
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 
+use sfml::system::Vector2f;
+
 pub struct ElectricMageTower {
   pub target: Option<Entity>,
   pub damage: i32,
   pub firing_timer: f32,
   pub range: f32,
-  sprite_render: SpriteRender,
-  sprite_scale: Vector3<f32>,
   charging_projectile: Option<Entity>,
-  transform: Transform,
+  position: Vector2f,
 }
 
 impl Component for ElectricMageTower {
@@ -30,16 +30,14 @@ impl Component for ElectricMageTower {
 }
 
 impl ElectricMageTower {
-  pub fn new(sprite_render: SpriteRender, sprite_scale: Vector3<f32>) -> Self {
+  pub fn new(position: Vector2f) -> Self {
     ElectricMageTower {
       target: None,
       damage: 10,
       firing_timer: 1.,
       range: 150.,
-      sprite_render,
-      sprite_scale,
       charging_projectile: None,
-      transform: Transform::default(),
+      position,
     }
   }
 
@@ -60,31 +58,31 @@ impl ElectricMageTower {
     updater: &Read<'a, LazyUpdate>,
     tower_translation: &Vector3<f32>,
   ) {
-    let mut transform = Transform::default();
-    transform.set_translation_xyz(
-      tower_translation.x as f32 - 10.,
-      tower_translation.y as f32 + 80.,
-      z_layer_to_coordinate(ZLayer::Projectile),
-    );
-    transform.set_scale(Vector3::new(
-      self.sprite_scale.x / 10. * 1.1,
-      self.sprite_scale.y / 10. * 1.1,
-      self.sprite_scale.z,
-    ));
-    self.charging_projectile = Some(
-      updater
-        .create_entity(&entities)
-        .with(self.sprite_render.clone())
-        .with(transform)
-        .with(Projectile::new(Box::new(PulsingElectricBall::new(
-          10,
-          5.,
-          150.,
-          self.sprite_scale,
-        ))))
-        .with(SimpleAnimation::new(0, 8, 0.05))
-        .build(),
-    );
+    // let mut transform = Transform::default();
+    // transform.set_translation_xyz(
+    //   tower_translation.x as f32 - 10.,
+    //   tower_translation.y as f32 + 80.,
+    //   z_layer_to_coordinate(ZLayer::Projectile),
+    // );
+    // transform.set_scale(Vector3::new(
+    //   self.sprite_scale.x / 10. * 1.1,
+    //   self.sprite_scale.y / 10. * 1.1,
+    //   self.sprite_scale.z,
+    // ));
+    // self.charging_projectile = Some(
+    //   updater
+    //     .create_entity(&entities)
+    //     .with(self.sprite_render.clone())
+    //     .with(transform)
+    //     .with(Projectile::new(Box::new(PulsingElectricBall::new(
+    //       10,
+    //       5.,
+    //       150.,
+    //       self.sprite_scale,
+    //     ))))
+    //     .with(SimpleAnimation::new(0, 8, 0.05))
+    //     .build(),
+    // );
   }
 
   fn update_timer<'a>(
@@ -152,14 +150,14 @@ impl TowerTrait for ElectricMageTower {
   }
   
   fn sprite_sheet_name(&self) -> &'static str {
-    "private_sprites/electric_tower"
+    "private_sprites/electric_tower.png"
   }
 
-  fn transform(&self) -> &Transform {
-    &self.transform
+  fn position(&self) -> &Vector2f {
+    &self.position
   }
 
-  fn transform_mut(&mut self) -> &mut Transform {
-    &mut self.transform
+  fn position_mut(&mut self) -> &mut Vector2f {
+    &mut self.position
   }
 }

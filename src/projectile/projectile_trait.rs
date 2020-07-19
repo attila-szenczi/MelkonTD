@@ -5,6 +5,8 @@ use amethyst::{
 
 use crate::minion::Minion;
 
+use sfml::system::Vector2f;
+
 pub trait ProjectileTrait: Send + Sync {
   fn update<'a>(
     &mut self,
@@ -20,6 +22,6 @@ pub trait ProjectileTrait: Send + Sync {
   fn dead(&self) -> bool;
   
   fn sprite_sheet_name(&self) -> &'static str;
-  fn transform(&self) -> &Transform;
-  fn transform_mut(&mut self) -> &mut Transform;
+  fn position(&self) -> &Vector2f;
+  fn position_mut(&mut self) -> &mut Vector2f;
 }

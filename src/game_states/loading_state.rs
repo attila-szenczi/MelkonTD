@@ -3,7 +3,11 @@ use sfml::window::Event;
 use super::battle_state::BattleState;
 use super::game_state_trait::{GameState, Transition};
 use crate::world::World;
+
+use crate::tower::ElectricMageTower;
+
 use sfml::graphics::RenderWindow;
+use sfml::system::Vector2f;
 
 pub struct LoadingState;
 
@@ -25,6 +29,9 @@ impl<'b> GameState for LoadingState {
     textures.insert_sprite_sheet("private_sprites/pulsing_electric_ball.png", 64, 4, 2);
     textures.insert("sprites/electric_mage_tower_icon.png", 24);
     textures.insert("sprites/locked_icon.png", 24);
+
+    let mage_tower = Box::new(ElectricMageTower::new(Vector2f::new(160., 950.)));
+    world.towers.push(mage_tower);
 
     // Event processing
     while let Some(event) = window.poll_event() {

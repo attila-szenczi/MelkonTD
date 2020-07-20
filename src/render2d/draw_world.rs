@@ -1,6 +1,6 @@
-use sfml::graphics::Color;
 use sfml::graphics::{
-  blend_mode::BlendMode, RenderStates, RenderTarget, RenderWindow, Sprite, Texture, Transformable,
+  blend_mode::BlendMode, Color, RectangleShape, RenderStates, RenderTarget, RenderWindow, Shape,
+  Sprite, Texture, Transformable,
 };
 use sfml::system::Vector2f;
 
@@ -15,7 +15,7 @@ pub fn draw_world(window: &mut RenderWindow, world: &mut World) {
   draw_background(window, world);
   draw_minions(window, world);
   draw_towers(window, world);
-  //draw_healthbars(window, world);
+  draw_healthbars(window, world);
   draw_projectiles(window, world);
   //draw_ui_elements(window, world);
   window.set_active(true);
@@ -71,5 +71,66 @@ fn draw_projectiles(window: &mut RenderWindow, world: &mut World) {
         .get_texture_data(projectile.sprite_sheet_name()),
       projectile.position(),
     );
+  }
+}
+
+fn draw_healthbars(window: &mut RenderWindow, world: &mut World) {
+  //Temp, will be replaced with textures
+  for minion in &world.minions {
+    {
+      let mut rectangle = RectangleShape::new();
+
+      let mut position = minion.position().clone();
+      position.y -= 61.;
+      position.x -= 31.;
+      position.x = position.x.floor();
+      position.y = position.y.floor();
+      rectangle.set_size(Vector2f::new(62., 17.));
+      rectangle.set_fill_color(Color {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 255,
+      });
+      rectangle.set_position(position);
+      window.draw(&rectangle);
+    }
+
+    {
+      let mut rectangle = RectangleShape::new();
+
+      let mut position = minion.position().clone();
+      position.y -= 60.;
+      position.x -= 30.;
+      position.x = position.x.floor();
+      position.y = position.y.floor();
+      rectangle.set_size(Vector2f::new(60., 15.));
+      rectangle.set_fill_color(Color {
+        r: 255,
+        g: 0,
+        b: 0,
+        a: 255,
+      });
+      rectangle.set_position(position);
+      window.draw(&rectangle);
+    }
+
+    let mut rectangle = RectangleShape::new();
+
+    let mut position = minion.position().clone();
+    position.y -= 60.;
+    position.x -= 30.;
+    position.x = position.x.floor();
+    position.y = position.y.floor();
+    rectangle.set_size(Vector2f::new(50., 15.));
+    rectangle.set_fill_color(Color {
+      r: 0,
+      g: 255,
+      b: 0,
+      a: 255,
+    });
+    rectangle.set_position(position);
+
+    window.draw(&rectangle);
   }
 }

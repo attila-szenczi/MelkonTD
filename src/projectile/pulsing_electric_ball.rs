@@ -32,11 +32,11 @@ pub struct PulsingElectricBall {
   pulsing_state: PulsingState,
   last_direction: Option<Vector2>,
   position: Vector2f,
-  scale_multiplier: f32,
+  scale_multiplier: Vector2f,
 }
 
 impl PulsingElectricBall {
-  pub fn new(damage: i32, detonation_range: f32, speed: f32, scale_multiplier: f32) -> Self {
+  pub fn new(damage: i32, detonation_range: f32, speed: f32, scale_multiplier: Vector2f) -> Self {
     let empty: Weak<RefCell<dyn MinionTrait>> = Weak::<RefCell<TestMinion>>::new();
     PulsingElectricBall {
       target: empty,
@@ -206,7 +206,11 @@ impl ProjectileTrait for PulsingElectricBall {
     &mut self.position
   }
 
-  fn scale_multiplier(&self) -> f32 {
+  fn scale_multiplier(&self) -> Vector2f {
     self.scale_multiplier
+  }
+
+  fn scale_multiplier_mut(&mut self) -> &mut Vector2f {
+    &mut self.scale_multiplier
   }
 }

@@ -23,5 +23,6 @@ pub trait ProjectileTrait {
   fn sprite_sheet_name(&self) -> &'static str;
   fn position(&self) -> &Vector2f;
   fn position_mut(&mut self) -> &mut Vector2f;
-  fn scale_multiplier(&self) -> f32;
+  fn scale_multiplier(&self) -> Vector2f;
+  fn scale_multiplier_mut(&mut self) -> &mut Vector2f;
 }

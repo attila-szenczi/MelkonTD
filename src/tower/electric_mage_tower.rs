@@ -1,89 +1,68 @@
-//use if_chain::if_chain;
-use std::cell::RefCell;
-use std::rc::Weak;
+use if_chain::if_chain;
 
 use super::tower_trait::TowerTrait;
 
 use crate::world::World;
 
-use sfml::system::Vector2f;
-
-use crate::minion::{MinionTrait, TestMinion};
 use crate::projectile::{ProjectileTrait, PulsingElectricBall};
 
+use generational_arena::{Arena, Index};
+
+use sfml::system::Vector2f;
+
 pub struct ElectricMageTower {
-  //TODO: Better way of lookup
-  pub target: Weak<RefCell<dyn MinionTrait>>,
+  pub target_index: Option<Index>,
   pub damage: i32,
   pub firing_timer: f32,
   pub range: f32,
-  charging_projectile: Weak<RefCell<dyn ProjectileTrait>>,
+  charging_projectile_index: Option<Index>,
   position: Vector2f,
 }
 
 impl ElectricMageTower {
   pub fn new(position: Vector2f) -> Self {
-    let empty_minion: Weak<RefCell<dyn MinionTrait>> = Weak::<RefCell<TestMinion>>::new();
-    let empty_proj: Weak<RefCell<dyn ProjectileTrait>> = Weak::<RefCell<PulsingElectricBall>>::new();
     ElectricMageTower {
-      target: empty_minion,
+      target_index: None,
       damage: 10,
       firing_timer: 1.,
       range: 150.,
-      charging_projectile: empty_proj,
+      charging_projectile_index: None,
       position,
     }
   }
 
-  fn fire<'a>(&mut self) {
-    // if let Some(charging_projectile_entity) = self.charging_projectile {
-    //   if let Some(projectile) = projectiles.get_mut(charging_projectile_entity) {
-    //     // projectile.fire();
-    //     // projectile.set_target(self.target.unwrap());
-    //   }
-    // }
-    self.charging_projectile = Weak::<RefCell<PulsingElectricBall>>::new();
-    self.reset_timer();
+  fn fire<'a>(&mut self, projectiles: &mut Arena<Box<dyn ProjectileTrait>>) {
+    if let Some(charging_projectile_index) = self.charging_projectile_index {
+      if let Some(projectile) = projectiles.get_mut(charging_projectile_index) {
+        projectile.fire();
+        //TODO: Set target
+        //projectile.set_target(self.target_index);
+        self.charging_projectile_index = None;
+        self.reset_timer();
+      }
+    }
   }
 
-  fn charge_projectile<'a>(
-    &mut self,
-    // entities: &Entities<'a>,
-    // updater: &Read<'a, LazyUpdate>,
-    // tower_translation: &Vector3<f32>,
-  ) {
-    // let mut transform = Transform::default();
-    // transform.set_translation_xyz(
-    //   tower_translation.x as f32 - 10.,
-    //   tower_translation.y as f32 + 80.,
-    //   z_layer_to_coordinate(ZLayer::Projectile),
-    // );
-    // transform.set_scale(Vector3::new(
-    //   self.sprite_scale.x / 10. * 1.1,
-    //   self.sprite_scale.y / 10. * 1.1,
-    //   self.sprite_scale.z,
-    // ));
-    // self.charging_projectile = Some(
-    //   updater
-    //     .create_entity(&entities)
-    //     .with(self.sprite_render.clone())
-    //     .with(transform)
-    //     .with(Projectile::new(Box::new(PulsingElectricBall::new(
-    //       10,
-    //       5.,
-    //       150.,
-    //       self.sprite_scale,
-    //     ))))
-    //     .with(SimpleAnimation::new(0, 8, 0.05))
-    //     .build(),
-    // );
+  fn charge_projectile<'a>(&mut self, projectiles: &mut Arena<Box<dyn ProjectileTrait>>) {
+    //TODO: Scale?
+    let mut projectile = Box::new(PulsingElectricBall::new(
+      10,
+      5.,
+      150.,
+      Vector2f::new(1., 1.),
+    ));
+    let position = projectile.position_mut();
+    position.x = self.position.x - 10.;
+    position.y = self.position.y + 80.;
+
+    self.charging_projectile_index = Some(projectiles.insert(projectile));
   }
 
   fn update_timer<'a>(&mut self, elapsed: f32, world: &mut World) -> bool {
     if self.firing_timer > 0. {
       self.firing_timer -= elapsed;
-      if self.firing_timer < 0.8 && self.charging_projectile.strong_count() > 0 {
-        //self.charge_projectile(entities, updater, tower_translation);
+      if self.firing_timer < 0.8 && self.charging_projectile_index != None {
+        self.charge_projectile(&mut world.projectiles);
       }
     } else {
       self.firing_timer = 0.;
@@ -95,37 +74,34 @@ impl ElectricMageTower {
     self.firing_timer += 1.;
   }
 
-  // fn is_in_range(&self, lhs: &Vector3<f32>, rhs: &Vector3<f32>) -> bool {
-  //   let y_diff = lhs.y - rhs.y;
-  //   let x_diff = lhs.x - rhs.x;
-  //   let square_sum = y_diff * y_diff + x_diff * x_diff;
-  //   square_sum.sqrt() < self.range
-  // }
+  fn is_in_range(&self, lhs: &Vector2f, rhs: &Vector2f) -> bool {
+    let y_diff = lhs.y - rhs.y;
+    let x_diff = lhs.x - rhs.x;
+    let square_sum = y_diff * y_diff + x_diff * x_diff;
+    square_sum.sqrt() < self.range
+  }
 }
 
 impl TowerTrait for ElectricMageTower {
   fn update<'a>(&mut self, world: &mut World, elapsed: f32) {
     if self.update_timer(elapsed, world) {
+      if_chain! {
+          if let Some(target_index) = self.target_index;
+          if let Some(target_minion) = world.minions.get(target_index);
+          if self.is_in_range(&self.position, target_minion.position());
+          then {
+              self.fire(&mut world.projectiles);
+          } else {
+            for (index, minion) in &world.minions {
+              if self.is_in_range(self.position(), minion.position()) {
+                self.target_index = Some(index);
+                self.fire(&mut world.projectiles);
 
-      // if_chain! {
-      //     if let Some(entity) = self.target;
-      //     if let Some(target_transform) = transforms.get(entity);
-      //     if self.is_in_range(tower_transform.translation(), target_transform.translation());
-      //     then {
-      //         self.fire(projectiles);
-      //     } else {
-      //         //TODO: Lookup instead of entities join?
-      //         for (entity, _minion, transform) in (entities, minions, transforms).join() {
-      //             let tower_translation = tower_transform.translation();
-      //             if self.is_in_range(tower_translation, transform.translation()) {
-      //                 self.target = Some(entity);
-      //                 self.fire(projectiles);
-
-      //                 break;
-      //             }
-      //         }
-      //     }
-      // }
+                break;
+              }
+            }
+          }
+      }
     }
   }
   fn sprite_sheet_name(&self) -> &'static str {

@@ -1,24 +1,18 @@
-use amethyst::core::Transform;
 use amethyst::ecs::prelude::World;
-use amethyst::prelude::*;
 
 use super::flyout_action_storage::FlyoutAction;
 use crate::texture_lookup::TextureLookup;
-use crate::tile_map::TileMap;
-use crate::tower::{ElectricMageTower, Tower, TowerType};
-use crate::z_layer::{z_layer_to_coordinate, ZLayer};
 use utils::rect::Rect;
 
 pub fn build_locked_action<'a>(texture_lookup: &TextureLookup) -> FlyoutAction {
-  let action = |_world: &mut World, _tile_index: i32, _tile_rect: Rect| -> () {
-  };
+  let action = |_world: &mut World, _tile_index: i32, _tile_rect: Rect| -> () {};
 
   let icon = texture_lookup.get_texture_with_default_scale("sprites/locked_icon");
   FlyoutAction::new(icon, action)
 }
 
 pub fn build_electric_mage_tower_action<'a>(texture_lookup: &TextureLookup) -> FlyoutAction {
-  let action = |world: &mut World, tile_index: i32, tile_rect: Rect| -> () {
+  let action = |_world: &mut World, _tile_index: i32, _tile_rect: Rect| -> () {
     // let mut transform = Transform::default();
     // transform.set_translation_xyz(
     //   tile_rect.left() as f32 + 25.,

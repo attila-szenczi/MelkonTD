@@ -1,17 +1,3 @@
-use amethyst::{
-  prelude::*,
-  renderer::{
-    plugins::{RenderFlat2D, RenderToWindow},
-    types::DefaultBackend,
-    RenderingBundle,
-  },
-  utils::application_root_dir,
-};
-
-use std::time::Duration;
-
-use amethyst::core::frame_limiter::FrameRateLimitStrategy;
-
 mod flyout_actions;
 mod game_state;
 mod game_states;
@@ -22,6 +8,7 @@ mod loading_state;
 mod minion;
 mod minion_spawn_system;
 mod projectile;
+mod render2d;
 mod simple_animation;
 mod simple_animation_system;
 mod texture_lookup;
@@ -30,7 +17,6 @@ mod tile_map;
 mod tower;
 mod world;
 mod z_layer;
-mod render2d;
 
 fn main() -> amethyst::Result<()> {
   let mut game = game_states::Game::new();

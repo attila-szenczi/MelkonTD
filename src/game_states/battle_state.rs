@@ -1,4 +1,4 @@
-use sfml::graphics::{RenderStates, RenderTarget, RenderWindow, Sprite};
+use sfml::graphics::RenderWindow;
 use sfml::system::Clock;
 use sfml::window::Event;
 

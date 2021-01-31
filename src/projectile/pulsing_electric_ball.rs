@@ -4,10 +4,13 @@ use amethyst::{
   ecs::prelude::{Entity, WriteStorage},
 };
 
+use std::cell::RefCell;
+use std::rc::Weak;
+
 use if_chain::if_chain;
 
 use super::projectile_trait::ProjectileTrait;
-use crate::minion::Minion;
+use crate::minion::{Minion, MinionTrait, TestMinion};
 use utils::coord::Vector2;
 
 use sfml::system::Vector2f;
@@ -20,31 +23,32 @@ enum PulsingState {
 }
 
 pub struct PulsingElectricBall {
-  target: Option<Entity>,
+  target: Weak<RefCell<dyn MinionTrait>>,
   damage: i32,
   detonation_range: f32,
   speed: f32,
   delete: bool,
   fired: bool,
-  normal_scale: Vector3<f32>,
   pulsing_state: PulsingState,
   last_direction: Option<Vector2>,
   position: Vector2f,
+  scale_multiplier: f32,
 }
 
 impl PulsingElectricBall {
-  pub fn new(damage: i32, detonation_range: f32, speed: f32, normal_scale: Vector3<f32>) -> Self {
+  pub fn new(damage: i32, detonation_range: f32, speed: f32, scale_multiplier: f32) -> Self {
+    let empty: Weak<RefCell<dyn MinionTrait>> = Weak::<RefCell<TestMinion>>::new();
     PulsingElectricBall {
-      target: None,
+      target: empty,
       damage,
       detonation_range,
       speed,
       delete: false,
       fired: false,
-      normal_scale,
       pulsing_state: PulsingState::Increase,
       last_direction: None,
       position: Vector2f::new(1., 1.),
+      scale_multiplier,
     }
   }
 
@@ -64,25 +68,25 @@ impl PulsingElectricBall {
   fn adjust_scale(&mut self, scale: &mut Vector3<f32>, elapsed: f32) {
     let diff = {
       if self.pulsing_state == PulsingState::Increase {
-        self.normal_scale.x * elapsed
+        //  self.normal_scale.x * elapsed
       } else {
-        -self.normal_scale.x * elapsed
+        //  -self.normal_scale.x * elapsed
       }
     };
 
-    scale.x += diff;
+    // scale.x += diff;
   }
 
   fn handle_scale_under_overflow(&mut self, scale: &mut Vector3<f32>) {
-    if scale.x > self.normal_scale.x {
-      let overflow = scale.x - self.normal_scale.x;
-      scale.x = self.normal_scale.x - overflow;
-      self.pulsing_state = PulsingState::Decrease;
-    } else if self.pulsing_state == PulsingState::Decrease && scale.x < self.normal_scale.x * 0.8 {
-      let underflow = self.normal_scale.x * 0.8 - scale.x;
-      scale.x = self.normal_scale.x * 0.8 + underflow;
-      self.pulsing_state = PulsingState::Increase;
-    }
+    // if scale.x > self.normal_scale.x {
+    //   let overflow = scale.x - self.normal_scale.x;
+    //   scale.x = self.normal_scale.x - overflow;
+    //   self.pulsing_state = PulsingState::Decrease;
+    // } else if self.pulsing_state == PulsingState::Decrease && scale.x < self.normal_scale.x * 0.8 {
+    //   let underflow = self.normal_scale.x * 0.8 - scale.x;
+    //   scale.x = self.normal_scale.x * 0.8 + underflow;
+    //   self.pulsing_state = PulsingState::Increase;
+    // }
   }
 
   fn hit_minion<'a>(&mut self, minions: &mut WriteStorage<'a, Minion>, target: Entity) {
@@ -149,34 +153,34 @@ impl ProjectileTrait for PulsingElectricBall {
       return ();
     }
     let projectile_transform = transforms.get(projectile_entity).unwrap();
-    if_chain! {
-        if let Some(target) = self.target;
-        if let Some(target_transform) = transforms.get(target);
-        then {
-            if self.is_in_range(projectile_transform.translation(), target_transform.translation()) {
-              self.hit_minion(minions, target);
-            } else {
-                let target_translation = target_transform.translation().clone();
-                let projectile_translation = projectile_transform.translation();
-                let mut direction = Vector2::new(target_translation.x - projectile_translation.x,
-                                                 target_translation.y - projectile_translation.y);
-                direction.normalize();
-                let projectile_transform_mut = transforms.get_mut(projectile_entity).unwrap();
-                self.update_projectile_translation(projectile_transform_mut, &direction, elapsed);
+    //if_chain! {
+    // if let Some(target) = self.target;
+    // if let Some(target_transform) = transforms.get(target);
+    // then {
+    //     if self.is_in_range(projectile_transform.translation(), target_transform.translation()) {
+    //       self.hit_minion(minions, target);
+    //     } else {
+    //         let target_translation = target_transform.translation().clone();
+    //         let projectile_translation = projectile_transform.translation();
+    //         let mut direction = Vector2::new(target_translation.x - projectile_translation.x,
+    //                                          target_translation.y - projectile_translation.y);
+    //         direction.normalize();
+    //         let projectile_transform_mut = transforms.get_mut(projectile_entity).unwrap();
+    //         self.update_projectile_translation(projectile_transform_mut, &direction, elapsed);
 
-                self.handle_going_beyond_target(projectile_transform_mut, &target_translation, &direction, minions, target);
-            }
-        } else {
-          let projectile_transform = transforms.get_mut(projectile_entity).unwrap();
-          let direction = self.last_direction.unwrap();
+    //         self.handle_going_beyond_target(projectile_transform_mut, &target_translation, &direction, minions, target);
+    //     }
+    // } else {
+    //   let projectile_transform = transforms.get_mut(projectile_entity).unwrap();
+    //   let direction = self.last_direction.unwrap();
 
-            self.update_projectile_translation(projectile_transform, &direction, elapsed);
-            self.pulsing_state = PulsingState::Dieing;
-            if projectile_transform.scale().x < 0.01 {
-              self.delete = true;
-            }
-        }
-    }
+    //     self.update_projectile_translation(projectile_transform, &direction, elapsed);
+    //     self.pulsing_state = PulsingState::Dieing;
+    //     if projectile_transform.scale().x < 0.01 {
+    //       self.delete = true;
+    //     }
+    // }
+    //}
   }
 
   fn dead(&self) -> bool {
@@ -187,7 +191,7 @@ impl ProjectileTrait for PulsingElectricBall {
     self.fired = true;
   }
   fn set_target(&mut self, entity: Entity) {
-    self.target = Some(entity);
+    // self.target = Some(entity);
   }
 
   fn sprite_sheet_name(&self) -> &'static str {
@@ -200,5 +204,9 @@ impl ProjectileTrait for PulsingElectricBall {
 
   fn position_mut(&mut self) -> &mut Vector2f {
     &mut self.position
+  }
+
+  fn scale_multiplier(&self) -> f32 {
+    self.scale_multiplier
   }
 }

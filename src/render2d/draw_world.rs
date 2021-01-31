@@ -6,6 +6,8 @@ use sfml::system::Vector2f;
 
 use std::ops::Deref;
 
+use generational_arena::Arena;
+
 use crate::texture_storage::TextureData;
 use crate::world::World;
 
@@ -39,7 +41,7 @@ fn draw_background(window: &mut RenderWindow, world: &mut World) {
 }
 
 fn draw_towers(window: &mut RenderWindow, world: &mut World) {
-  for tower in &world.towers {
+  for (_index, tower) in &world.towers {
     draw_sprite(
       window,
       world
@@ -51,7 +53,7 @@ fn draw_towers(window: &mut RenderWindow, world: &mut World) {
 }
 
 fn draw_minions(window: &mut RenderWindow, world: &mut World) {
-  for minion in &world.minions {
+  for (_index, minion) in &world.minions {
     draw_sprite(
       window,
       world
@@ -63,7 +65,7 @@ fn draw_minions(window: &mut RenderWindow, world: &mut World) {
 }
 
 fn draw_projectiles(window: &mut RenderWindow, world: &mut World) {
-  for projectile in &world.projectiles {
+  for (_index, projectile) in &world.projectiles {
     draw_sprite(
       window,
       world
@@ -76,7 +78,7 @@ fn draw_projectiles(window: &mut RenderWindow, world: &mut World) {
 
 fn draw_healthbars(window: &mut RenderWindow, world: &mut World) {
   //Temp, will be replaced with textures
-  for minion in &world.minions {
+  for (_index, minion) in &world.minions {
     {
       let mut rectangle = RectangleShape::new();
 

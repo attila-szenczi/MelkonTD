@@ -5,8 +5,8 @@ use super::minion_trait::MinionTrait;
 use sfml::system::Vector2f;
 
 pub struct TestMinion {
-  pub max_health: i32,
-  pub health: i32,
+  max_health: i32,
+  health: i32,
   position: Vector2f,
 }
 
@@ -15,7 +15,7 @@ impl TestMinion {
     TestMinion {
       max_health: 20,
       health: 20,
-      position: position,
+      position,
     }
   }
 }

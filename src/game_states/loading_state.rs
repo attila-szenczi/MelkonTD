@@ -31,7 +31,7 @@ impl<'b> GameState for LoadingState {
     textures.insert("sprites/locked_icon.png", 24);
 
     let mage_tower = Box::new(ElectricMageTower::new(Vector2f::new(160., 950.)));
-    world.towers.push(mage_tower);
+    world.towers.insert(mage_tower);
 
     // Event processing
     while let Some(event) = window.poll_event() {

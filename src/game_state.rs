@@ -14,7 +14,6 @@ use amethyst::{
 
 use log::info;
 
-use crate::tower::TowerUpdateSystem;
 use crate::{
   flyout_actions::{EntityType, FlyoutActionStorage},
   input_system::UserInputSystem,
@@ -22,8 +21,6 @@ use crate::{
   minion::MinionDeathSystem,
   minion::MinionUpdateSystem,
   minion_spawn_system::MinionSpawnSystem,
-  projectile::ProjectileDeathSystem,
-  projectile::ProjectileUpdateSystem,
   simple_animation_system::SimpleAnimationSystem,
   texture_lookup::TextureLookup,
   tile_map::{TileMap, TileType},
@@ -55,12 +52,6 @@ impl<'a, 'b> GameState<'a, 'b> {
         "user_input_system",
         &["input_system"],
       )
-      .with(TowerUpdateSystem, "tower_update_system", &["input_system"])
-      .with(
-        ProjectileUpdateSystem,
-        "projectile_update_system",
-        &["input_system"],
-      )
       .with(
         MinionUpdateSystem,
         "minion_update_system",
@@ -69,11 +60,6 @@ impl<'a, 'b> GameState<'a, 'b> {
       .with(
         MinionDeathSystem,
         "minion_death_system",
-        &["input_system", "projectile_update_system"],
-      )
-      .with(
-        ProjectileDeathSystem,
-        "projectile_death_system",
         &["input_system", "projectile_update_system"],
       )
       .with(

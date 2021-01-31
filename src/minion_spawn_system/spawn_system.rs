@@ -12,7 +12,6 @@ use amethyst::{
 
 use crate::{
   hierarchy_lookup::HierarchyLookup,
-  minion::{Minion, TestMinion},
   z_layer::{z_layer_to_coordinate, ZLayer},
 };
 

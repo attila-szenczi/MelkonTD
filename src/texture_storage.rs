@@ -37,7 +37,8 @@ impl TextureStorage {
     let mut path = self.working_dir.clone();
     path.push(filepath);
     println!("Path: {}", path.as_path().to_str().unwrap());
-    let texture = Texture::from_file(path.to_str().unwrap()).unwrap();
+    let mut texture = Texture::from_file(path.to_str().unwrap()).unwrap();
+    texture.set_smooth(true);
 
     //TODO: Pass origin optionally
     let sprite_width = texture.size().x as i32;
@@ -91,7 +92,8 @@ impl TextureStorage {
   ) {
     let mut path = self.working_dir.clone();
     path.push(filepath);
-    let texture = Texture::from_file(path.to_str().unwrap()).unwrap();
+    let mut texture = Texture::from_file(path.to_str().unwrap()).unwrap();
+    texture.set_smooth(true);
 
     let sprite_rects = create_sprite_rects(columns, rows, texture.size());
     let scale = default_in_game_sprite_width as f32 / (texture.size().x as f32 / columns as f32);

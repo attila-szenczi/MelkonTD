@@ -7,7 +7,7 @@ use crate::minion::Minion;
 
 use sfml::system::Vector2f;
 
-pub trait ProjectileTrait: Send + Sync {
+pub trait ProjectileTrait {
   fn update<'a>(
     &mut self,
     projectile_entity: Entity,
@@ -20,8 +20,8 @@ pub trait ProjectileTrait: Send + Sync {
   fn set_target(&mut self, entity: Entity);
 
   fn dead(&self) -> bool;
-  
   fn sprite_sheet_name(&self) -> &'static str;
   fn position(&self) -> &Vector2f;
   fn position_mut(&mut self) -> &mut Vector2f;
+  fn scale_multiplier(&self) -> f32;
 }

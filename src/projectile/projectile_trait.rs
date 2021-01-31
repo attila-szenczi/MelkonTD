@@ -1,11 +1,11 @@
-use crate::world::World;
+use crate::minion::MinionTrait;
 
-use generational_arena::Index;
+use generational_arena::{Arena, Index};
 
 use sfml::system::Vector2f;
 
 pub trait ProjectileTrait {
-  fn update<'a>(&mut self, world: &mut World, elapsed: f32);
+  fn update<'a>(&mut self, minions: &mut Arena<Box<dyn MinionTrait>>, elapsed: f32);
 
   fn fire(&mut self);
   fn set_target(&mut self, target_id: Index);

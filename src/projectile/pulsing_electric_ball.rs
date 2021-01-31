@@ -4,7 +4,7 @@ use generational_arena::Index;
 
 use super::projectile_trait::ProjectileTrait;
 use crate::minion::MinionTrait;
-use crate::world::World;
+use generational_arena::Arena;
 
 use utils::coord::Vector2;
 
@@ -116,7 +116,7 @@ impl PulsingElectricBall {
 }
 
 impl ProjectileTrait for PulsingElectricBall {
-  fn update<'a>(&mut self, world: &mut World, elapsed: f32) {
+  fn update<'a>(&mut self, minions: &mut Arena<Box<dyn MinionTrait>>, elapsed: f32) {
     self.pulse(elapsed);
 
     if !self.fired {
@@ -125,7 +125,7 @@ impl ProjectileTrait for PulsingElectricBall {
 
     if_chain! {
       if let Some(target_index) = self.target_index;
-      if let Some(target) = world.minions.get_mut(target_index);
+      if let Some(target) = minions.get_mut(target_index);
       then {
         if self.is_in_range(&self.position, target.position()) {
           self.hit_minion(target);

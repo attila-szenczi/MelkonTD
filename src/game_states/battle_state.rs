@@ -5,7 +5,9 @@ use sfml::window::Event;
 use super::game_state_trait::{GameState, Transition};
 
 use crate::minion::{update_minions, MinionSpawner};
+use crate::projectile::update_projectiles;
 use crate::render2d::draw_world;
+use crate::tower::update_towers;
 use crate::world::World;
 
 pub struct BattleState {
@@ -28,6 +30,8 @@ impl<'b> GameState for BattleState {
     println!("elapsed {}", elapsed);
     self.clock.restart();
     self.minion_spawner.update(world);
+    update_towers(world, elapsed);
+    update_projectiles(world, elapsed);
     update_minions(&mut world.minions, elapsed);
     // projectile update
     // minion update

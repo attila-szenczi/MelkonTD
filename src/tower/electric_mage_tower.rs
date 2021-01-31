@@ -2,8 +2,7 @@ use if_chain::if_chain;
 
 use super::tower_trait::TowerTrait;
 
-use crate::world::World;
-
+use crate::minion::MinionTrait;
 use crate::projectile::{ProjectileTrait, PulsingElectricBall};
 
 use generational_arena::{Arena, Index};
@@ -57,11 +56,15 @@ impl ElectricMageTower {
     self.charging_projectile_index = Some(projectiles.insert(projectile));
   }
 
-  fn update_timer<'a>(&mut self, elapsed: f32, world: &mut World) -> bool {
+  fn update_timer<'a>(
+    &mut self,
+    elapsed: f32,
+    projectiles: &mut Arena<Box<dyn ProjectileTrait>>,
+  ) -> bool {
     if self.firing_timer > 0. {
       self.firing_timer -= elapsed;
       if self.firing_timer < 0.8 && self.charging_projectile_index != None {
-        self.charge_projectile(&mut world.projectiles);
+        self.charge_projectile(projectiles);
       }
     } else {
       self.firing_timer = 0.;
@@ -82,19 +85,24 @@ impl ElectricMageTower {
 }
 
 impl TowerTrait for ElectricMageTower {
-  fn update<'a>(&mut self, world: &mut World, elapsed: f32) {
-    if self.update_timer(elapsed, world) {
+  fn update<'a>(
+    &mut self,
+    minions: &mut Arena<Box<dyn MinionTrait>>,
+    projectiles: &mut Arena<Box<dyn ProjectileTrait>>,
+    elapsed: f32,
+  ) {
+    if self.update_timer(elapsed, projectiles) {
       if_chain! {
           if let Some(target_index) = self.target_index;
-          if let Some(target_minion) = world.minions.get(target_index);
+          if let Some(target_minion) = minions.get(target_index);
           if self.is_in_range(&self.position, target_minion.position());
           then {
-              self.fire(&mut world.projectiles);
+              self.fire(projectiles);
           } else {
-            for (index, minion) in &world.minions {
+            for (index, minion) in minions {
               if self.is_in_range(self.position(), minion.position()) {
                 self.target_index = Some(index);
-                self.fire(&mut world.projectiles);
+                self.fire(projectiles);
 
                 break;
               }

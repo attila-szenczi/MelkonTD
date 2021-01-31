@@ -35,8 +35,7 @@ impl ElectricMageTower {
     if let Some(charging_projectile_index) = self.charging_projectile_index {
       if let Some(projectile) = projectiles.get_mut(charging_projectile_index) {
         projectile.fire();
-        //TODO: Set target
-        //projectile.set_target(self.target_index);
+        projectile.set_target(self.target_index.unwrap());
         self.charging_projectile_index = None;
         self.reset_timer();
       }

@@ -1,4 +1,4 @@
-pub use self::game::Game;
+pub use game::Game;
 
 mod battle_state;
 mod game;

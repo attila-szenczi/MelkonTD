@@ -1,6 +1,6 @@
-pub use self::projectile_trait::ProjectileTrait;
-pub use self::projectile_updater::update_projectiles;
-pub use self::pulsing_electric_ball::PulsingElectricBall;
+pub use projectile_trait::ProjectileTrait;
+pub use projectile_updater::update_projectiles;
+pub use pulsing_electric_ball::PulsingElectricBall;
 
 mod projectile_component;
 mod projectile_death_system;

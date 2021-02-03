@@ -2,12 +2,15 @@ use amethyst::ecs::{Component, DenseVecStorage};
 
 use super::minion_trait::MinionTrait;
 
+use crate::generic_traits::*;
+
 use sfml::system::Vector2f;
 
 pub struct TestMinion {
   max_health: i32,
   health: i32,
   position: Vector2f,
+  scale: Vector2f,
 }
 
 impl TestMinion {
@@ -16,6 +19,7 @@ impl TestMinion {
       max_health: 20,
       health: 20,
       position,
+      scale: Vector2f::new(1., 1.),
     }
   }
 }
@@ -36,10 +40,9 @@ impl MinionTrait for TestMinion {
   fn max_health(&self) -> i32 {
     self.max_health
   }
-  fn dead(&self) -> bool {
-    self.health <= 0
-  }
+}
 
+impl DrawableTrait for TestMinion {
   fn sprite_sheet_name(&self) -> &'static str {
     "private_sprites/5_enemies_1_attack_018.png"
   }
@@ -50,5 +53,19 @@ impl MinionTrait for TestMinion {
 
   fn position_mut(&mut self) -> &mut Vector2f {
     &mut self.position
+  }
+
+  
+  fn scale(&self) -> &Vector2f {
+    &self.scale
+  }
+  fn scale_mut(&mut self) -> &mut Vector2f {
+    &mut self.scale
+  }
+}
+
+impl MortalTrait for TestMinion {
+  fn dead(&self) -> bool {
+    self.health <= 0
   }
 }

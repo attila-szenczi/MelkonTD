@@ -5,6 +5,8 @@ use super::tower_trait::TowerTrait;
 use crate::minion::MinionTrait;
 use crate::projectile::{ProjectileTrait, PulsingElectricBall};
 
+use crate::generic_traits::*;
+
 use generational_arena::{Arena, Index};
 
 use sfml::system::Vector2f;
@@ -16,6 +18,8 @@ pub struct ElectricMageTower {
   pub range: f32,
   charging_projectile_index: Option<Index>,
   position: Vector2f,
+  scale: Vector2f,
+  delete: bool,
 }
 
 impl ElectricMageTower {
@@ -27,6 +31,8 @@ impl ElectricMageTower {
       range: 150.,
       charging_projectile_index: None,
       position,
+      scale: Vector2f::new(1., 1.),
+      delete: false,
     }
   }
 
@@ -111,6 +117,9 @@ impl TowerTrait for ElectricMageTower {
       }
     }
   }
+}
+
+impl DrawableTrait for ElectricMageTower {
   fn sprite_sheet_name(&self) -> &'static str {
     "private_sprites/electric_tower.png"
   }
@@ -121,5 +130,19 @@ impl TowerTrait for ElectricMageTower {
 
   fn position_mut(&mut self) -> &mut Vector2f {
     &mut self.position
+  }
+
+  fn scale(&self) -> &Vector2f {
+    &self.scale
+  }
+
+  fn scale_mut(&mut self) -> &mut Vector2f {
+    &mut self.scale
+  }
+}
+
+impl MortalTrait for ElectricMageTower {
+  fn dead(&self) -> bool {
+    return self.delete;
   }
 }

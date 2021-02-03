@@ -3,7 +3,9 @@ use if_chain::if_chain;
 use generational_arena::Index;
 
 use super::projectile_trait::ProjectileTrait;
+use crate::generic_traits::*;
 use crate::minion::MinionTrait;
+
 use generational_arena::Arena;
 
 use utils::coord::Vector2;
@@ -149,17 +151,15 @@ impl ProjectileTrait for PulsingElectricBall {
     }
   }
 
-  fn dead(&self) -> bool {
-    return self.delete;
-  }
-
   fn fire(&mut self) {
     self.fired = true;
   }
   fn set_target(&mut self, target_index: Index) {
     self.target_index = Some(target_index);
   }
+}
 
+impl DrawableTrait for PulsingElectricBall {
   fn sprite_sheet_name(&self) -> &'static str {
     "private_sprites/pulsing_electric_ball.png"
   }
@@ -172,11 +172,17 @@ impl ProjectileTrait for PulsingElectricBall {
     &mut self.position
   }
 
-  fn scale(&self) -> Vector2f {
-    self.scale
+  fn scale(&self) -> &Vector2f {
+    &self.scale
   }
 
   fn scale_mut(&mut self) -> &mut Vector2f {
     &mut self.scale
+  }
+}
+
+impl MortalTrait for PulsingElectricBall {
+  fn dead(&self) -> bool {
+    return self.delete;
   }
 }

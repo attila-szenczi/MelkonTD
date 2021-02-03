@@ -27,7 +27,6 @@ impl BattleState {
 impl<'b> GameState for BattleState {
   fn run(&mut self, window: &mut RenderWindow, world: &mut World) -> Transition {
     let elapsed = self.clock.restart().as_seconds();
-    println!("elapsed {}", elapsed);
     self.clock.restart();
     self.minion_spawner.update(world);
     update_towers(world, elapsed);

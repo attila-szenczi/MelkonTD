@@ -26,6 +26,10 @@ pub fn draw_world(window: &mut RenderWindow, world: &mut World) {
 
 fn draw_sprite(window: &mut RenderWindow, texture_data: &TextureData, position: &Vector2f) {
   let mut sprite = Sprite::with_texture(&texture_data.texture);
+  //TODO: Animation?
+  if !texture_data.sprite_rects.is_empty() {
+    sprite.set_texture_rect(&texture_data.sprite_rects[0]);
+  }
   sprite.set_scale(Vector2f::from((texture_data.scale, texture_data.scale)));
   sprite.set_position((position.x.floor(), position.y.floor()));
   sprite.set_origin((texture_data.origin.x.floor(), texture_data.origin.y.floor()));

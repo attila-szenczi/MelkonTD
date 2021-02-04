@@ -2,7 +2,7 @@ use crate::minion::MinionTrait;
 
 use generational_arena::{Arena, Index};
 
-use crate::generic_traits::*;
+use crate::shared_traits::*;
 
 use sfml::system::Vector2f;
 

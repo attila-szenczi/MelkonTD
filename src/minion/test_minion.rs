@@ -2,7 +2,7 @@ use amethyst::ecs::{Component, DenseVecStorage};
 
 use super::minion_trait::MinionTrait;
 
-use crate::generic_traits::*;
+use crate::shared_traits::*;
 
 use sfml::system::Vector2f;
 
@@ -55,7 +55,6 @@ impl DrawableTrait for TestMinion {
     &mut self.position
   }
 
-  
   fn scale(&self) -> &Vector2f {
     &self.scale
   }

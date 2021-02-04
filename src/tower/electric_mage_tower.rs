@@ -5,7 +5,7 @@ use super::tower_trait::TowerTrait;
 use crate::minion::MinionTrait;
 use crate::projectile::{ProjectileTrait, PulsingElectricBall};
 
-use crate::generic_traits::*;
+use crate::shared_traits::*;
 
 use generational_arena::{Arena, Index};
 
@@ -57,7 +57,7 @@ impl ElectricMageTower {
     ));
     let position = projectile.position_mut();
     position.x = self.position.x - 10.;
-    position.y = self.position.y + 80.;
+    position.y = self.position.y - 80.;
 
     self.charging_projectile_index = Some(projectiles.insert(projectile));
   }
@@ -69,7 +69,7 @@ impl ElectricMageTower {
   ) -> bool {
     if self.firing_timer > 0. {
       self.firing_timer -= elapsed;
-      if self.firing_timer < 0.8 && self.charging_projectile_index != None {
+      if self.firing_timer < 0.8 && self.charging_projectile_index == None {
         self.charge_projectile(projectiles);
       }
     } else {
@@ -106,7 +106,9 @@ impl TowerTrait for ElectricMageTower {
               self.fire(projectiles);
           } else {
             for (index, minion) in minions {
-              if self.is_in_range(self.position(), minion.position()) {
+              //println!("positions: {} {} {} {}", self.position.x, self.position.y,
+               //minion.position().x, minion.position().y);
+              if self.is_in_range(&self.position, minion.position()) {
                 self.target_index = Some(index);
                 self.fire(projectiles);
 

@@ -7,8 +7,11 @@ use super::game_state_trait::{GameState, Transition};
 use crate::minion::{update_minions, MinionSpawner};
 use crate::projectile::update_projectiles;
 use crate::render2d::draw_world;
+use crate::shared_traits::*;
 use crate::tower::update_towers;
 use crate::world::World;
+
+use generational_arena::Arena;
 
 pub struct BattleState {
   minion_spawner: MinionSpawner,
@@ -32,10 +35,12 @@ impl<'b> GameState for BattleState {
     update_towers(world, elapsed);
     update_projectiles(world, elapsed);
     update_minions(&mut world.minions, elapsed);
+
     // projectile update
     // minion update
-    // minion death
-    // projectile death
+    remove_dead(&mut world.towers);
+    remove_dead(&mut world.projectiles);
+    remove_dead(&mut world.minions);
     // simple animation
 
     draw_world(window, world);
@@ -55,4 +60,8 @@ impl<'b> GameState for BattleState {
 
     Transition::KeepState
   }
+}
+
+fn remove_dead<T: ?Sized + MortalTrait>(container: &mut Arena<Box<T>>) {
+  container.retain(|_i, elem| !elem.dead());
 }

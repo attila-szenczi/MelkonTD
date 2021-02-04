@@ -3,8 +3,8 @@ use if_chain::if_chain;
 use generational_arena::Index;
 
 use super::projectile_trait::ProjectileTrait;
-use crate::generic_traits::*;
 use crate::minion::MinionTrait;
+use crate::shared_traits::*;
 
 use generational_arena::Arena;
 
@@ -24,7 +24,7 @@ pub struct PulsingElectricBall {
   damage: i32,
   detonation_range: f32,
   speed: f32,
-  delete: bool,
+  dead: bool,
   fired: bool,
   pulsing_state: PulsingState,
   last_direction: Option<Vector2>, //TODO: Add trait on top of sf::Vector2f and use it?
@@ -40,7 +40,7 @@ impl PulsingElectricBall {
       damage,
       detonation_range,
       speed,
-      delete: false,
+      dead: false,
       fired: false,
       pulsing_state: PulsingState::Increase,
       last_direction: None,
@@ -91,7 +91,7 @@ impl PulsingElectricBall {
 
   fn hit_minion<'a>(&mut self, minion: &mut Box<dyn MinionTrait>) {
     minion.hit(self.damage);
-    self.delete = true;
+    self.dead = true;
   }
 
   fn update_projectile_position(&mut self, direction: &Vector2, elapsed: f32) {
@@ -141,12 +141,13 @@ impl ProjectileTrait for PulsingElectricBall {
           self.handle_going_beyond_target(target);
         }
       } else {
-        let direction = self.last_direction.unwrap();
-        self.update_projectile_position(&direction, elapsed);
-        self.pulsing_state = PulsingState::Dieing;
-        if self.scale.x < 0.01 {
-          self.delete = true;
-        }
+        self.dead = true;
+        // let direction = self.last_direction.unwrap();
+        // self.update_projectile_position(&direction, elapsed);
+        // self.pulsing_state = PulsingState::Dieing;
+        // if self.scale.x < 0.01 {
+        //   self.dead = true;
+        // }
       }
     }
   }
@@ -183,6 +184,6 @@ impl DrawableTrait for PulsingElectricBall {
 
 impl MortalTrait for PulsingElectricBall {
   fn dead(&self) -> bool {
-    return self.delete;
+    return self.dead;
   }
 }

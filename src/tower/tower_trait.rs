@@ -1,6 +1,6 @@
-use crate::generic_traits::*;
 use crate::minion::MinionTrait;
 use crate::projectile::ProjectileTrait;
+use crate::shared_traits::*;
 
 use generational_arena::Arena;
 

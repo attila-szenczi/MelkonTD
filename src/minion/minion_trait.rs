@@ -1,4 +1,4 @@
-use crate::generic_traits::*;
+use crate::shared_traits::*;
 
 pub trait MinionTrait: DrawableTrait + MortalTrait {
   fn hit(&mut self, damage: i32);

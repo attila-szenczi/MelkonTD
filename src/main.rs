@@ -1,7 +1,7 @@
 mod flyout_actions;
 mod game_state;
 mod game_states;
-mod generic_traits;
+mod shared_traits;
 mod hierarchy_lookup;
 mod input_system;
 mod load_image;

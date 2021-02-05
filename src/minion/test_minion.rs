@@ -61,6 +61,10 @@ impl DrawableTrait for TestMinion {
   fn scale_mut(&mut self) -> &mut Vector2f {
     &mut self.scale
   }
+
+  fn current_frame(&self) -> usize {
+    return 0;
+  }
 }
 
 impl MortalTrait for TestMinion {

@@ -64,7 +64,7 @@ impl ElectricMageTower {
   ) -> bool {
     if self.firing_timer > 0. {
       self.firing_timer -= elapsed;
-      if self.firing_timer < 0.8 && self.charging_projectile_index == None {
+      if self.firing_timer < 0.65 && self.charging_projectile_index == None {
         self.charge_projectile(projectiles);
       }
     } else {
@@ -135,6 +135,10 @@ impl DrawableTrait for ElectricMageTower {
 
   fn scale_mut(&mut self) -> &mut Vector2f {
     &mut self.scale
+  }
+
+  fn current_frame(&self) -> usize {
+    return 0;
   }
 }
 

@@ -13,18 +13,14 @@ pub struct MinionSpawner {
 
 impl MinionSpawner {
   pub fn new() -> Self {
-    MinionSpawner {
-      counter: 2000,
-    }
+    MinionSpawner { counter: 2000 }
   }
 
   pub fn update(&mut self, world: &mut World) {
     self.counter += 1;
 
     if self.counter >= 200 {
-      let minion = Box::new(TestMinion::new(
-        Vector2f::new(SPAWN_POINT_X, SPAWN_POINT_Y),
-      ));
+      let minion = Box::new(TestMinion::new(Vector2f::new(SPAWN_POINT_X, SPAWN_POINT_Y)));
       world.minions.insert(minion);
 
       self.counter = 0;

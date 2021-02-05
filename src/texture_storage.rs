@@ -36,7 +36,6 @@ impl TextureStorage {
   pub fn insert_with_key(&mut self, key: &str, filepath: &str) {
     let mut path = self.working_dir.clone();
     path.push(filepath);
-    println!("Path: {}", path.as_path().to_str().unwrap());
     let mut texture = Texture::from_file(path.to_str().unwrap()).unwrap();
     texture.set_smooth(true);
 

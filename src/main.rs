@@ -1,7 +1,7 @@
+mod animation;
 mod flyout_actions;
 mod game_state;
 mod game_states;
-mod shared_traits;
 mod hierarchy_lookup;
 mod input_system;
 mod load_image;
@@ -10,6 +10,7 @@ mod minion;
 mod minion_spawn_system;
 mod projectile;
 mod render2d;
+mod shared_traits;
 mod simple_animation;
 mod simple_animation_system;
 mod texture_lookup;

@@ -31,11 +31,12 @@ fn draw_sprite(
   texture_data: &TextureData,
   position: &Vector2f,
   scale: &Vector2f,
+  frame: usize,
 ) {
   let mut sprite = Sprite::with_texture(&texture_data.texture);
   //TODO: Animation?
   if !texture_data.sprite_rects.is_empty() {
-    sprite.set_texture_rect(&texture_data.sprite_rects[0]);
+    sprite.set_texture_rect(&texture_data.sprite_rects[frame]);
   }
   sprite.set_scale(Vector2f::from((
     texture_data.scale * scale.x,
@@ -65,6 +66,7 @@ fn draw_all<T: ?Sized + DrawableTrait>(
       texture_storage.get_texture_data(elem.sprite_sheet_name()),
       elem.position(),
       elem.scale(),
+      elem.current_frame(),
     );
   }
 }

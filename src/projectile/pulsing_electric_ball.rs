@@ -3,6 +3,7 @@ use if_chain::if_chain;
 use generational_arena::Index;
 
 use super::projectile_trait::ProjectileTrait;
+use crate::animation::TimedAnimation;
 use crate::minion::MinionTrait;
 use crate::shared_traits::*;
 
@@ -31,6 +32,7 @@ pub struct PulsingElectricBall {
   position: Vector2f,
   scale: Vector2f,
   normal_scale: Vector2f,
+  animation: TimedAnimation,
 }
 
 impl PulsingElectricBall {
@@ -46,7 +48,8 @@ impl PulsingElectricBall {
       last_direction: None,
       position: Vector2f::new(1., 1.),
       scale: Vector2f::new(0.1, 0.1),
-      normal_scale: Vector2f::new(1., 1.), //TODO: From texture storage
+      normal_scale: Vector2f::new(1., 1.),
+      animation: TimedAnimation::new(8, 0.05), //TODO: inject it from texture storage
     }
   }
 
@@ -66,9 +69,9 @@ impl PulsingElectricBall {
   fn adjust_scale(&mut self, elapsed: f32) {
     let diff = {
       if self.pulsing_state == PulsingState::Increase {
-        self.normal_scale.x * elapsed
+        self.normal_scale.x * elapsed * 0.8
       } else {
-        -self.normal_scale.x * elapsed
+        -self.normal_scale.x * elapsed * 0.8
       }
     };
 
@@ -120,6 +123,7 @@ impl PulsingElectricBall {
 impl ProjectileTrait for PulsingElectricBall {
   fn update<'a>(&mut self, minions: &mut Arena<Box<dyn MinionTrait>>, elapsed: f32) {
     self.pulse(elapsed);
+    self.animation.update(elapsed);
 
     if !self.fired {
       return ();
@@ -178,6 +182,10 @@ impl DrawableTrait for PulsingElectricBall {
 
   fn scale_mut(&mut self) -> &mut Vector2f {
     &mut self.scale
+  }
+
+  fn current_frame(&self) -> usize {
+    return self.animation.current_frame;
   }
 }
 

@@ -7,5 +7,6 @@ pub trait DrawableTrait: Send + Sync {
   fn position_mut(&mut self) -> &mut Vector2f;
   fn scale(&self) -> &Vector2f;
   fn scale_mut(&mut self) -> &mut Vector2f;
+  fn current_frame(&self) -> usize;
   //get_animation_state
 }

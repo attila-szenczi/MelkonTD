@@ -4,8 +4,6 @@ use generational_arena::{Arena, Index};
 
 use crate::shared_traits::*;
 
-use sfml::system::Vector2f;
-
 pub trait ProjectileTrait: DrawableTrait + MortalTrait {
   fn update<'a>(&mut self, minions: &mut Arena<Box<dyn MinionTrait>>, elapsed: f32);
 

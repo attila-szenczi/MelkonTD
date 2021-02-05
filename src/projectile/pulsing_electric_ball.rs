@@ -34,7 +34,7 @@ pub struct PulsingElectricBall {
 }
 
 impl PulsingElectricBall {
-  pub fn new(damage: i32, detonation_range: f32, speed: f32, scale: Vector2f) -> Self {
+  pub fn new(damage: i32, detonation_range: f32, speed: f32) -> Self {
     PulsingElectricBall {
       target_index: None,
       damage,
@@ -45,7 +45,7 @@ impl PulsingElectricBall {
       pulsing_state: PulsingState::Increase,
       last_direction: None,
       position: Vector2f::new(1., 1.),
-      scale,
+      scale: Vector2f::new(0.1, 0.1),
       normal_scale: Vector2f::new(1., 1.), //TODO: From texture storage
     }
   }
@@ -141,13 +141,12 @@ impl ProjectileTrait for PulsingElectricBall {
           self.handle_going_beyond_target(target);
         }
       } else {
-        self.dead = true;
-        // let direction = self.last_direction.unwrap();
-        // self.update_projectile_position(&direction, elapsed);
-        // self.pulsing_state = PulsingState::Dieing;
-        // if self.scale.x < 0.01 {
-        //   self.dead = true;
-        // }
+        let direction = self.last_direction.unwrap();
+        self.update_projectile_position(&direction, elapsed);
+        self.pulsing_state = PulsingState::Dieing;
+        if self.scale.x < 0.01 {
+          self.dead = true;
+        }
       }
     }
   }

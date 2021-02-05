@@ -49,12 +49,7 @@ impl ElectricMageTower {
 
   fn charge_projectile<'a>(&mut self, projectiles: &mut Arena<Box<dyn ProjectileTrait>>) {
     //TODO: Scale?
-    let mut projectile = Box::new(PulsingElectricBall::new(
-      10,
-      5.,
-      150.,
-      Vector2f::new(1., 1.),
-    ));
+    let mut projectile = Box::new(PulsingElectricBall::new(10, 5., 150.));
     let position = projectile.position_mut();
     position.x = self.position.x - 10.;
     position.y = self.position.y - 80.;

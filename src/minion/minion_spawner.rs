@@ -2,8 +2,6 @@ use crate::minion::TestMinion;
 use crate::world::World;
 use sfml::system::Vector2f;
 
-use generational_arena::Arena;
-
 const SPAWN_POINT_X: f32 = 50.;
 const SPAWN_POINT_Y: f32 = 820.;
 

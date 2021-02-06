@@ -1,6 +1,5 @@
 use sfml::graphics::{
-  blend_mode::BlendMode, Color, RectangleShape, RenderStates, RenderTarget, RenderWindow, Shape,
-  Sprite, Texture, Transformable,
+  blend_mode::BlendMode, Color, IntRect, RenderTarget, RenderWindow, Sprite, Transformable,
 };
 use sfml::system::Vector2f;
 
@@ -72,62 +71,46 @@ fn draw_all<T: ?Sized + DrawableTrait>(
 }
 
 fn draw_healthbars(window: &mut RenderWindow, world: &mut World) {
-  //Temp, will be replaced with textures
+  let green_texture_data = &world
+    .texture_storage
+    .get_texture_data("private_sprites/healthbar_green.png");
+  let red_texture_data = &world
+    .texture_storage
+    .get_texture_data("private_sprites/healthbar_red.png");
+
+  //TODO: Factorize
   for (_index, minion) in &world.minions {
     {
-      let mut rectangle = RectangleShape::new();
+      {
+        let mut sprite = Sprite::with_texture(red_texture_data.texture.deref());
+        sprite.set_scale(Vector2f::from((
+          red_texture_data.scale,
+          red_texture_data.scale,
+        )));
+        let mut position = minion.position().clone();
+        position.y -= 61.;
+        position.x -= 31.;
+        sprite.set_position((position.x.floor(), position.y.floor()));
+        sprite.set_origin((red_texture_data.origin.x, red_texture_data.origin.y));
+        window.draw(&sprite);
+      }
 
-      let mut position = minion.position().clone();
-      position.y -= 61.;
-      position.x -= 31.;
-      position.x = position.x.floor();
-      position.y = position.y.floor();
-      rectangle.set_size(Vector2f::new(62., 17.));
-      rectangle.set_fill_color(Color {
-        r: 0,
-        g: 0,
-        b: 0,
-        a: 255,
-      });
-      rectangle.set_position(position);
-      window.draw(&rectangle);
+      {
+        let mut sprite = Sprite::with_texture(green_texture_data.texture.deref());
+        let percentage_multiplier = minion.health() as f32 / minion.max_health() as f32;
+
+        sprite.set_scale(Vector2f::from((
+          green_texture_data.scale * percentage_multiplier,
+          green_texture_data.scale,
+        )));
+        let mut position = minion.position().clone();
+        position.y -= 61.;
+        position.x -= 31. + (green_texture_data.default_width as f32 / 2.)
+          - green_texture_data.default_width as f32 * (percentage_multiplier / 2.);
+        sprite.set_position((position.x, position.y));
+        sprite.set_origin((green_texture_data.origin.x, green_texture_data.origin.y));
+        window.draw(&sprite);
+      }
     }
-
-    {
-      let mut rectangle = RectangleShape::new();
-
-      let mut position = minion.position().clone();
-      position.y -= 60.;
-      position.x -= 30.;
-      position.x = position.x.floor();
-      position.y = position.y.floor();
-      rectangle.set_size(Vector2f::new(60., 15.));
-      rectangle.set_fill_color(Color {
-        r: 255,
-        g: 0,
-        b: 0,
-        a: 255,
-      });
-      rectangle.set_position(position);
-      window.draw(&rectangle);
-    }
-
-    let mut rectangle = RectangleShape::new();
-
-    let mut position = minion.position().clone();
-    position.y -= 60.;
-    position.x -= 30.;
-    position.x = position.x.floor();
-    position.y = position.y.floor();
-    rectangle.set_size(Vector2f::new(50., 15.));
-    rectangle.set_fill_color(Color {
-      r: 0,
-      g: 255,
-      b: 0,
-      a: 255,
-    });
-    rectangle.set_position(position);
-
-    window.draw(&rectangle);
   }
 }

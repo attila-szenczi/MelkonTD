@@ -16,6 +16,7 @@ pub struct TextureData {
   pub sprite_rects: Vec<IntRect>, //Only filled in case there are multiple sprites
   pub scale: f32,
   pub origin: Vector2f,
+  pub default_width: i32,
 }
 
 pub struct TextureStorage {
@@ -51,6 +52,7 @@ impl TextureStorage {
         sprite_rects: vec![],
         scale: 1., //TODO: If it will be used outside of background it might not be good
         origin,
+        default_width: sprite_width,
       },
     );
   }
@@ -78,6 +80,7 @@ impl TextureStorage {
         sprite_rects: vec![],
         scale,
         origin,
+        default_width,
       },
     );
   }
@@ -109,6 +112,7 @@ impl TextureStorage {
         sprite_rects,
         scale,
         origin,
+        default_width:  default_in_game_sprite_width
       },
     );
   }

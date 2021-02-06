@@ -26,6 +26,8 @@ impl<'b> GameState for LoadingState {
     textures.insert("sprites/healthbar_front.png", 32);
     textures.insert("sprites/healthbar_outline.png", 32);
     textures.insert("private_sprites/electric_tower.png", 177);
+    textures.insert("private_sprites/healthbar_green.png", 118);
+    textures.insert("private_sprites/healthbar_red.png", 118);
     textures.insert_sprite_sheet("private_sprites/pulsing_electric_ball.png", 64, 4, 2);
     textures.insert("sprites/electric_mage_tower_icon.png", 24);
     textures.insert("sprites/locked_icon.png", 24);

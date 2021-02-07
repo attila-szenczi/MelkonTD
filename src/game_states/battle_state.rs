@@ -1,9 +1,9 @@
+use super::game_state_trait::{GameState, Transition};
 use sfml::graphics::RenderWindow;
 use sfml::system::Clock;
 use sfml::window::Event;
 
-use super::game_state_trait::{GameState, Transition};
-
+use crate::battle_input_states::BattleUserInputHandler;
 use crate::minion::{update_minions, MinionSpawner};
 use crate::projectile::update_projectiles;
 use crate::render2d::draw_world;
@@ -16,6 +16,7 @@ use generational_arena::Arena;
 pub struct BattleState {
   minion_spawner: MinionSpawner,
   clock: Clock,
+  input_state_handler: BattleUserInputHandler,
 }
 
 impl BattleState {
@@ -23,6 +24,7 @@ impl BattleState {
     BattleState {
       minion_spawner: MinionSpawner::new(),
       clock: Clock::start(), //TODO: Check std clock or something
+      input_state_handler: BattleUserInputHandler::new(),
     }
   }
 }
@@ -53,8 +55,10 @@ impl<'b> GameState for BattleState {
           window.close();
           return Transition::Quit;
         }
-        //Event::MouseButtonPressed { button, x, y } => println!("Left click"),
-        _ => (),
+        _ => {
+          self.input_state_handler.process_event(&event, world);
+          ()
+        }
       }
     }
 

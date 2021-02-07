@@ -1,3 +1,4 @@
+use crate::battle_input_states::ClickableObjectStorage;
 use crate::minion::MinionTrait;
 use crate::projectile::ProjectileTrait;
 use crate::texture_storage::TextureStorage;
@@ -10,6 +11,7 @@ pub struct World {
   pub minions: Arena<Box<dyn MinionTrait>>,
   pub towers: Arena<Box<dyn TowerTrait>>,
   pub projectiles: Arena<Box<dyn ProjectileTrait>>,
+  pub clickable_objects: ClickableObjectStorage,
   //pub ui_elements: Vec<Box<dyn ClickableUiElement>>,
 }
 
@@ -20,6 +22,7 @@ impl World {
       minions: Arena::new(),
       towers: Arena::new(),
       projectiles: Arena::new(),
+      clickable_objects: ClickableObjectStorage::new(),
     }
   }
 }

@@ -14,7 +14,16 @@ impl InputStateTrait for DefaultBattleInputState {
         x,
         y,
       } => {
-        println!("Left click {} {}", x, y);
+        let object_option = world.clickable_objects.find_object(x.clone(), y.clone());
+        match object_option {
+          None => (),
+          Some(object) => {
+            println!(
+              "Object left clicked {} {} {} {}",
+              object.rect.left, object.rect.top, object.rect.width, object.rect.height
+            );
+          }
+        }
       }
       _ => (),
     }

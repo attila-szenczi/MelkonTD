@@ -2,11 +2,12 @@ use sfml::window::Event;
 
 use super::battle_state::BattleState;
 use super::game_state_trait::{GameState, Transition};
+use crate::battle_input_states::ClickableObjectRectType;
 use crate::world::World;
 
 use crate::tower::ElectricMageTower;
 
-use sfml::graphics::RenderWindow;
+use sfml::graphics::{IntRect, RenderWindow};
 use sfml::system::Vector2f;
 
 pub struct LoadingState;
@@ -34,6 +35,10 @@ impl<'b> GameState for LoadingState {
 
     let mage_tower = Box::new(ElectricMageTower::new(Vector2f::new(160., 950.)));
     world.towers.insert(mage_tower);
+
+    world
+      .clickable_objects
+      .insert(IntRect::new(470, 950, 185, 100), ClickableObjectRectType::Slot);
 
     // Event processing
     while let Some(event) = window.poll_event() {

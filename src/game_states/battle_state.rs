@@ -4,6 +4,7 @@ use sfml::system::Clock;
 use sfml::window::Event;
 
 use crate::battle_input_states::BattleUserInputHandler;
+use crate::flyout_actions::*;
 use crate::minion::{update_minions, MinionSpawner};
 use crate::projectile::update_projectiles;
 use crate::render2d::draw_world;
@@ -37,6 +38,7 @@ impl<'b> GameState for BattleState {
     update_towers(world, elapsed);
     update_projectiles(world, elapsed);
     update_minions(&mut world.minions, elapsed);
+    update_active_flyout_actions(&mut world.active_flyout_actions, elapsed);
 
     // projectile update
     // minion update
@@ -68,4 +70,10 @@ impl<'b> GameState for BattleState {
 
 fn remove_dead<T: ?Sized + MortalTrait>(container: &mut Arena<Box<T>>) {
   container.retain(|_i, elem| !elem.dead());
+}
+
+fn update_active_flyout_actions(active_flyout_actions: &mut Vec<Box<FlyoutAction>>, elapsed: f32) {
+  for action in active_flyout_actions {
+    action.update(elapsed);
+  }
 }

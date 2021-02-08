@@ -172,16 +172,8 @@ impl DrawableTrait for PulsingElectricBall {
     &self.position
   }
 
-  fn position_mut(&mut self) -> &mut Vector2f {
-    &mut self.position
-  }
-
   fn scale(&self) -> &Vector2f {
     &self.scale
-  }
-
-  fn scale_mut(&mut self) -> &mut Vector2f {
-    &mut self.scale
   }
 
   fn current_frame(&self) -> usize {
@@ -192,5 +184,15 @@ impl DrawableTrait for PulsingElectricBall {
 impl MortalTrait for PulsingElectricBall {
   fn dead(&self) -> bool {
     return self.dead;
+  }
+}
+
+impl MoveableTrait for PulsingElectricBall {
+  fn position_mut(&mut self) -> &mut Vector2f {
+    &mut self.position
+  }
+
+  fn scale_mut(&mut self) -> &mut Vector2f {
+    &mut self.scale
   }
 }

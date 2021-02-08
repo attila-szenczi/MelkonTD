@@ -45,14 +45,15 @@ impl<'b> InputState for DefaultInputState {
 
             match tile_map.find_tile(world_point.x as i32, world_point.y as i32) {
               Some((index, TileType::Slot, rect)) => {
-                let flyout_input_state = Box::new(FlyoutInputState::new(
-                  entities,
-                  updater,
-                  index,
-                  rect,
-                  flyout_actions.get_actions(&EntityType::Tile(TileType::Slot)),
-                ));
-                return Transition::PushState(flyout_input_state);
+                // let flyout_input_state = Box::new(FlyoutInputState::new(
+                //   entities,
+                //   updater,
+                //   index,
+                //   rect,
+                //   flyout_actions.get_actions(&EntityType::Tile(TileType::Slot)),
+                // ));
+                // return Transition::PushState(flyout_input_state);
+                return Transition::KeepState;
               }
               _ => (),
             }

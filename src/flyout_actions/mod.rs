@@ -1,6 +1,8 @@
-pub use flyout_action_storage::*;
+pub use _flyout_action_storage::*;
 
-pub use build_actions::*;
+pub use _build_actions::*;
+pub use flyout_action::FlyoutAction;
 
-mod flyout_action_storage;
-mod build_actions;
+mod _build_actions;
+mod _flyout_action_storage;
+mod flyout_action;

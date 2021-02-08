@@ -7,6 +7,7 @@ use std::ops::Deref;
 
 use generational_arena::Arena;
 
+use crate::flyout_actions::*;
 use crate::shared_traits::DrawableTrait;
 use crate::texture_storage::TextureData;
 use crate::texture_storage::TextureStorage;
@@ -20,6 +21,7 @@ pub fn draw_world(window: &mut RenderWindow, world: &mut World) {
   draw_all(window, &world.texture_storage, &world.towers);
   draw_healthbars(window, world);
   draw_all(window, &world.texture_storage, &world.projectiles);
+  draw_flyout_actions(window, &world.texture_storage, &world.active_flyout_actions);
   //draw_ui_elements(window, world);
   window.set_active(true);
   window.display();
@@ -66,6 +68,22 @@ fn draw_all<T: ?Sized + DrawableTrait>(
       elem.position(),
       elem.scale(),
       elem.current_frame(),
+    );
+  }
+}
+
+fn draw_flyout_actions(
+  window: &mut RenderWindow,
+  texture_storage: &TextureStorage,
+  active_flyout_actions: &Vec<Box<FlyoutAction>>,
+) {
+  for action in active_flyout_actions {
+    draw_sprite(
+      window,
+      texture_storage.get_texture_data(action.image_name()),
+      action.position(),
+      action.scale(),
+      0,
     );
   }
 }

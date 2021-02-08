@@ -125,16 +125,8 @@ impl DrawableTrait for ElectricMageTower {
     &self.position
   }
 
-  fn position_mut(&mut self) -> &mut Vector2f {
-    &mut self.position
-  }
-
   fn scale(&self) -> &Vector2f {
     &self.scale
-  }
-
-  fn scale_mut(&mut self) -> &mut Vector2f {
-    &mut self.scale
   }
 
   fn current_frame(&self) -> usize {
@@ -145,5 +137,15 @@ impl DrawableTrait for ElectricMageTower {
 impl MortalTrait for ElectricMageTower {
   fn dead(&self) -> bool {
     return self.delete;
+  }
+}
+
+impl MoveableTrait for ElectricMageTower {
+  fn position_mut(&mut self) -> &mut Vector2f {
+    &mut self.position
+  }
+
+  fn scale_mut(&mut self) -> &mut Vector2f {
+    &mut self.scale
   }
 }

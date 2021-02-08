@@ -5,15 +5,9 @@ use amethyst::{
 
 use log::info;
 
-use crate::flyout_actions::{
-  build_electric_mage_tower_action, build_locked_action, EntityType, FlyoutActionStorage,
-};
+use crate::flyout_actions::FlyoutActionStorage;
 use crate::z_layer::{z_layer_to_coordinate, ZLayer};
-use crate::{
-  game_state::GameState,
-  texture_lookup::TextureLookup,
-  tile_map::{TileMap, TileType},
-};
+use crate::{game_state::GameState, texture_lookup::TextureLookup, tile_map::TileMap};
 use utils::coord::Coord;
 
 pub struct LoadingState;
@@ -164,25 +158,25 @@ fn init_texture_lookup(world: &mut World) {
 }
 
 fn fill_flyout_actions(world: &mut World) {
-  let mut action_storage = FlyoutActionStorage::default();
+  let action_storage = FlyoutActionStorage::default();
   {
-    let texture_lookup = world.read_resource::<TextureLookup>();
-    action_storage.insert(
-      EntityType::Tile(TileType::Slot),
-      build_electric_mage_tower_action(&texture_lookup),
-    );
-    action_storage.insert(
-      EntityType::Tile(TileType::Slot),
-      build_locked_action(&texture_lookup),
-    );
-    action_storage.insert(
-      EntityType::Tile(TileType::Slot),
-      build_locked_action(&texture_lookup),
-    );
-    action_storage.insert(
-      EntityType::Tile(TileType::Slot),
-      build_locked_action(&texture_lookup),
-    );
+    // let texture_lookup = world.read_resource::<TextureLookup>();
+    // action_storage.insert(
+    //   EntityType::Tile(TileType::Slot),
+    //   build_electric_mage_tower_action(&texture_lookup),
+    // );
+    // action_storage.insert(
+    //   EntityType::Tile(TileType::Slot),
+    //   build_locked_action(&texture_lookup),
+    // );
+    // action_storage.insert(
+    //   EntityType::Tile(TileType::Slot),
+    //   build_locked_action(&texture_lookup),
+    // );
+    // action_storage.insert(
+    //   EntityType::Tile(TileType::Slot),
+    //   build_locked_action(&texture_lookup),
+    // );
   }
   world.insert(action_storage);
 }

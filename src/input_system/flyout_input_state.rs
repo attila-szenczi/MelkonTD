@@ -53,15 +53,15 @@ impl FlyoutInputState {
           + flyout_transform_vectors[i].y,
         z_layer_to_coordinate(ZLayer::UiFlyout),
       );
-      transform.set_scale(action.icon.default_scale);
+      //transform.set_scale(action.icon.default_scale);
 
-      flyout_entities.push(
-        updater
-          .create_entity(&entities)
-          .with(action.icon.sprite_render.clone())
-          .with(transform)
-          .build(),
-      );
+      // flyout_entities.push(
+      //   updater
+      //     .create_entity(&entities)
+      //     .with(action.icon.sprite_render.clone())
+      //     .with(transform)
+      //     .build(),
+      // );
 
       flyout_rects.push(Rect::new(
         Coord::new(
@@ -121,9 +121,9 @@ impl<'b> InputState for FlyoutInputState {
                 let clicked_tile_index = self.clicked_tile_index.clone();
                 let clicked_tile_rect = self.clicked_tile_rect.clone();
                 let flyout_action = action.clone();
-                updater.exec_mut(move |world| {
-                  (flyout_action.action)(world, clicked_tile_index, clicked_tile_rect);
-                });
+                // updater.exec_mut(move |world| {
+                //   (flyout_action.action)(world, clicked_tile_index, clicked_tile_rect);
+                // });
 
                 for entity in &self.flyout_entities {
                   entities

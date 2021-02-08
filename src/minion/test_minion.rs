@@ -51,15 +51,8 @@ impl DrawableTrait for TestMinion {
     &self.position
   }
 
-  fn position_mut(&mut self) -> &mut Vector2f {
-    &mut self.position
-  }
-
   fn scale(&self) -> &Vector2f {
     &self.scale
-  }
-  fn scale_mut(&mut self) -> &mut Vector2f {
-    &mut self.scale
   }
 
   fn current_frame(&self) -> usize {
@@ -70,5 +63,15 @@ impl DrawableTrait for TestMinion {
 impl MortalTrait for TestMinion {
   fn dead(&self) -> bool {
     self.health <= 0
+  }
+}
+
+impl MoveableTrait for TestMinion {
+  fn position_mut(&mut self) -> &mut Vector2f {
+    &mut self.position
+  }
+
+  fn scale_mut(&mut self) -> &mut Vector2f {
+    &mut self.scale
   }
 }

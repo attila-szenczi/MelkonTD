@@ -40,18 +40,14 @@ impl<'b> GameState for BattleState {
     update_minions(&mut world.minions, elapsed);
     update_active_flyout_actions(&mut world.active_flyout_actions, elapsed);
 
-    // projectile update
-    // minion update
     remove_dead(&mut world.towers);
     remove_dead(&mut world.projectiles);
     remove_dead(&mut world.minions);
-    // simple animation
+    world.active_flyout_actions.retain(|elem| !elem.dead());
 
     draw_world(window, world);
 
-    // State machine
     while let Some(event) = window.poll_event() {
-      // Request closing for the window
       match event {
         Event::Closed => {
           window.close();

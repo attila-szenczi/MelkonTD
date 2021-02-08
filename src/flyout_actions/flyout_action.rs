@@ -8,6 +8,7 @@ use sfml::system::Vector2f;
 pub struct FlyoutAction {
   transition: LinearScalePositionTransition,
   image_name: String,
+  dead: bool,
 }
 
 impl FlyoutAction {
@@ -15,10 +16,13 @@ impl FlyoutAction {
     FlyoutAction {
       transition,
       image_name,
+      dead: false,
     }
   }
 
-  pub fn execute(_world: &mut World) {}
+  pub fn execute(&mut self, _world: &mut World) {
+    self.dead = true;
+  }
 
   pub fn update(&mut self, elapsed: f32) {
     self.transition.update(elapsed);
@@ -34,5 +38,11 @@ impl FlyoutAction {
 
   pub fn scale(&self) -> &Vector2f {
     &self.transition.scale_current
+  }
+}
+
+impl MortalTrait for FlyoutAction {
+  fn dead(&self) -> bool {
+    self.dead
   }
 }

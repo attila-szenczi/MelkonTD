@@ -2,7 +2,7 @@ use sfml::window::Event;
 
 use super::battle_state::BattleState;
 use super::game_state_trait::{GameState, Transition};
-use crate::battle_input_states::ClickableObjectRectType;
+use crate::battle_input_states::ClickableObjectType;
 use crate::world::World;
 
 use crate::tower::ElectricMageTower;
@@ -38,7 +38,7 @@ impl<'b> GameState for LoadingState {
 
     world
       .clickable_objects
-      .insert(IntRect::new(470, 950, 185, 100), ClickableObjectRectType::Slot);
+      .insert(IntRect::new(470, 950, 185, 100), ClickableObjectType::Slot);
 
     // Event processing
     while let Some(event) = window.poll_event() {

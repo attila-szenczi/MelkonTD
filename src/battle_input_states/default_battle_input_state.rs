@@ -27,8 +27,8 @@ impl InputStateTrait for DefaultBattleInputState {
               "Object left clicked {} {} {} {}",
               object.rect.left, object.rect.top, object.rect.width, object.rect.height
             );
-            match &object.rect_type {
-              ClickableObjectRectType::Tower(Index) => (),
+            match &object.object_type {
+              ClickableObjectType::Tower(Index) => (),
               Slot => {
                 //let middlePoint = sfml
                 //TODO: Generate it from distance + angle as

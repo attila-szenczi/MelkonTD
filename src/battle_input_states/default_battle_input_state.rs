@@ -1,7 +1,9 @@
+use sfml::graphics::IntRect;
 use sfml::system::Vector2f;
 use sfml::window::mouse::Button;
 use sfml::window::Event;
 
+use super::flyout_input_state::FlyoutInputState;
 use super::input_state_trait::*;
 
 use crate::animation::LinearScalePositionTransition;
@@ -20,6 +22,7 @@ impl InputStateTrait for DefaultBattleInputState {
         y,
       } => {
         let object_option = world.clickable_objects.find_object(x.clone(), y.clone());
+        //TODO: Use this for flyout and simply don't process out of state stuff.
         match object_option {
           None => (),
           Some(object) => {
@@ -29,7 +32,7 @@ impl InputStateTrait for DefaultBattleInputState {
             );
             match &object.object_type {
               ClickableObjectType::Tower(Index) => (),
-              Slot => {
+              ClickableObjectType::Slot => {
                 //let middlePoint = sfml
                 //TODO: Generate it from distance + angle as
                 let position_from = Vector2f::new(
@@ -37,6 +40,7 @@ impl InputStateTrait for DefaultBattleInputState {
                   (object.rect.top + object.rect.height / 2) as f32,
                 );
                 let position_to = Vector2f::new(position_from.x, position_from.y - 100.);
+
                 let scale_from = Vector2f::new(0., 0.);
                 let scale_to = Vector2f::new(1., 1.);
                 let transition = LinearScalePositionTransition::new(
@@ -49,8 +53,12 @@ impl InputStateTrait for DefaultBattleInputState {
                 let flyout_action = Box::new(FlyoutAction::new(
                   transition,
                   String::from("sprites/locked_icon.png"),
+                  64, //TODO: Get it from texturemap
+                  64,
                 ));
                 world.active_flyout_actions.push(flyout_action);
+
+                return Transition::PushState(Box::new(FlyoutInputState {}));
               }
             }
           }

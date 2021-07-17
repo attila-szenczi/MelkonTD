@@ -43,7 +43,6 @@ impl<'b> GameState for BattleState {
     remove_dead(&mut world.towers);
     remove_dead(&mut world.projectiles);
     remove_dead(&mut world.minions);
-    world.active_flyout_actions.retain(|elem| !elem.dead());
 
     draw_world(window, world);
 

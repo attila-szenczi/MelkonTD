@@ -31,7 +31,7 @@ impl<'b> GameState for LoadingState {
     textures.insert("private_sprites/healthbar_red.png", 118);
     textures.insert_sprite_sheet("private_sprites/pulsing_electric_ball.png", 64, 4, 2);
     textures.insert("sprites/electric_mage_tower_icon.png", 24);
-    textures.insert("sprites/locked_icon.png", 24);
+    textures.insert("sprites/locked_icon.png", 64);
 
     let mage_tower = Box::new(ElectricMageTower::new(Vector2f::new(160., 950.)));
     world.towers.insert(mage_tower);

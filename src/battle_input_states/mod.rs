@@ -5,3 +5,4 @@ mod battle_user_input_handler;
 mod clickable_object_storage;
 mod default_battle_input_state;
 mod input_state_trait;
+mod flyout_input_state;

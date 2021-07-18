@@ -18,6 +18,7 @@ pub struct BattleState {
   minion_spawner: MinionSpawner,
   clock: Clock,
   input_state_handler: BattleUserInputHandler,
+  //TODO: Callback queue to manipulate world after each iteration
 }
 
 impl BattleState {

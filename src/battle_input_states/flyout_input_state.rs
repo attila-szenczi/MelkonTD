@@ -9,7 +9,38 @@ use crate::battle_input_states::*;
 use crate::flyout_actions::*;
 use crate::world::World;
 
-pub struct FlyoutInputState {}
+use generational_arena::Index;
+
+pub struct FlyoutInputState {
+  clickable_object_idx: Index,
+}
+
+impl FlyoutInputState {
+  pub fn new(
+    position_from: Vector2f,
+    clickable_object_idx: Index,
+    active_flyout_actions: &mut Vec<Box<FlyoutAction>>,
+  ) -> Self {
+    let position_to = Vector2f::new(position_from.x, position_from.y - 100.);
+
+    let scale_from = Vector2f::new(0., 0.);
+    let scale_to = Vector2f::new(1., 1.);
+    let transition =
+      LinearScalePositionTransition::new(position_from, position_to, scale_from, scale_to, 0.5);
+    let flyout_action = Box::new(FlyoutAction::new(
+      transition,
+      String::from("sprites/locked_icon.png"),
+      64, //TODO: Get it from texturemap
+      64,
+    ));
+    //TODO: Drop 4
+    active_flyout_actions.push(flyout_action);
+
+    FlyoutInputState {
+      clickable_object_idx,
+    }
+  }
+}
 
 impl InputStateTrait for FlyoutInputState {
   fn process_event<'a>(&mut self, event: &Event, world: &mut World) -> Transition {

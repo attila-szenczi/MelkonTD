@@ -25,7 +25,7 @@ impl InputStateTrait for DefaultBattleInputState {
         //TODO: Use this for flyout and simply don't process out of state stuff.
         match object_option {
           None => (),
-          Some(object) => {
+          Some((index, object)) => {
             println!(
               "Object left clicked {} {} {} {}",
               object.rect.left, object.rect.top, object.rect.width, object.rect.height
@@ -39,26 +39,8 @@ impl InputStateTrait for DefaultBattleInputState {
                   (object.rect.left + object.rect.width / 2) as f32,
                   (object.rect.top + object.rect.height / 2) as f32,
                 );
-                let position_to = Vector2f::new(position_from.x, position_from.y - 100.);
 
-                let scale_from = Vector2f::new(0., 0.);
-                let scale_to = Vector2f::new(1., 1.);
-                let transition = LinearScalePositionTransition::new(
-                  position_from,
-                  position_to,
-                  scale_from,
-                  scale_to,
-                  0.5,
-                );
-                let flyout_action = Box::new(FlyoutAction::new(
-                  transition,
-                  String::from("sprites/locked_icon.png"),
-                  64, //TODO: Get it from texturemap
-                  64,
-                ));
-                world.active_flyout_actions.push(flyout_action);
-
-                return Transition::PushState(Box::new(FlyoutInputState {}));
+                return Transition::PushState(Box::new(FlyoutInputState::new(position_from, index, &mut world.active_flyout_actions)));
               }
             }
           }

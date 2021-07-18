@@ -1,6 +1,6 @@
 use sfml::graphics::IntRect;
 
-use generational_arena::Index;
+use generational_arena::{Arena, Index};
 
 pub enum ClickableObjectType {
   Slot,
@@ -13,28 +13,32 @@ pub struct ClickableObject {
 }
 
 pub struct ClickableObjectStorage {
-  clickable_objects: Vec<ClickableObject>,
+  clickable_objects: Arena<ClickableObject>,
 }
 
 impl ClickableObjectStorage {
   pub fn new() -> ClickableObjectStorage {
     ClickableObjectStorage {
-      clickable_objects: Vec::new(),
+      clickable_objects: Arena::new(),
     }
   }
 
   pub fn insert(&mut self, rect: IntRect, object_type: ClickableObjectType) {
     self
       .clickable_objects
-      .push(ClickableObject { rect, object_type });
+      .insert(ClickableObject { rect, object_type });
   }
 
-  pub fn find_object(&mut self, position_x: i32, position_y: i32) -> Option<&mut ClickableObject> {
+  pub fn find_object(
+    &mut self,
+    position_x: i32,
+    position_y: i32,
+  ) -> Option<(Index, &mut ClickableObject)> {
     self.clickable_objects.iter_mut().find(|object| {
-      position_x >= object.rect.left
-        && position_x <= object.rect.left + object.rect.width
-        && position_y >= object.rect.top
-        && position_y <= object.rect.top + object.rect.height
+      position_x >= object.1.rect.left
+        && position_x <= object.1.rect.left + object.1.rect.width
+        && position_y >= object.1.rect.top
+        && position_y <= object.1.rect.top + object.1.rect.height
     })
   }
 }

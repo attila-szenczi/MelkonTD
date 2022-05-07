@@ -8,7 +8,6 @@ mod input_system;
 mod load_image;
 mod loading_state;
 mod minion;
-mod minion_spawn_system;
 mod projectile;
 mod render2d;
 mod shared_traits;
@@ -21,7 +20,7 @@ mod tower;
 mod world;
 mod z_layer;
 
-fn main() -> amethyst::Result<()> {
+fn main() -> Result<(), std::io::Error> {
   let mut game = game_states::Game::new();
 
   game.run();

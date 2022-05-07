@@ -17,7 +17,7 @@ impl InputStateTrait for DefaultBattleInputState {
   fn process_event<'a>(&mut self, event: &Event, world: &mut World) -> Transition {
     match event {
       Event::MouseButtonPressed {
-        button: Button::Left,
+        button: Button::LEFT,
         x,
         y,
       } => {

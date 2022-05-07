@@ -19,10 +19,7 @@ impl Game {
   }
 
   pub fn run(&mut self) {
-    let context_settings = ContextSettings {
-      antialiasing_level: 0,
-      ..Default::default()
-    };
+    let context_settings = ContextSettings::default();
     let mut window = RenderWindow::new((1920, 1080), "MelkonTD", Style::CLOSE, &context_settings);
     window.set_framerate_limit(80);
     window.set_vertical_sync_enabled(true);

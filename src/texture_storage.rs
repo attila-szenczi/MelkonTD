@@ -3,7 +3,8 @@ use std::ops::Deref;
 use std::path::PathBuf;
 
 use sfml::graphics::{IntRect, Sprite, Texture};
-use sfml::system::{SfBox, Vector2f, Vector2u};
+use sfml::system::{ Vector2f, Vector2u};
+use sfml::SfBox;
 
 // #[derive(Clone)]
 // pub struct SpriteRenderWithDefaultScale {

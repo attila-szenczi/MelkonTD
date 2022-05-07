@@ -5,15 +5,7 @@ authors = ["Attila Szenczi <szenczi.attila90@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-amethyst = "0.15.0"
 if_chain = "1.0.0"
-log = { version = "0.4.8", features = ["serde"] }
 utils = {path = "utils"}
-sfml = "0.15.1"
+sfml = "0.16.0"
 generational-arena = "0.2.8"
-
-[features]
-default = ["vulkan"]
-empty = ["amethyst/empty"]
-metal = ["amethyst/metal"]
-vulkan = ["amethyst/vulkan"]

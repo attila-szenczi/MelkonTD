@@ -1,8 +1,6 @@
 
 This is a learning project aiming to learn Rust.
 
-Currently i use the [Amethyst](https://amethyst.rs/) game engine, but working on the switch to [SFML](https://www.sfml-dev.org/).
-
 The project's scope is not yet decided, it can be anything in this range:
 - Simple desktop Tower defense/Anti-tower defense
 - Some more advanced TD/AntiTD for android/ios/browser.

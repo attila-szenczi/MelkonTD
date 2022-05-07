@@ -1,21 +1,12 @@
-use amethyst::{
-  core::transform::Transform,
-  ecs::prelude::{Entity, WriteStorage},
-};
+use crate::minion::MinionTrait;
 
-use crate::minion::Minion;
+use generational_arena::{Arena, Index};
 
-pub trait ProjectileTrait: Send + Sync {
-  fn update<'a>(
-    &mut self,
-    projectile_entity: Entity,
-    minions: &mut WriteStorage<'a, Minion>,
-    transforms: &mut WriteStorage<'a, Transform>,
-    elapsed: f32,
-  );
+use crate::shared_traits::*;
+
+pub trait ProjectileTrait: DrawableTrait + MortalTrait + MoveableTrait {
+  fn update<'a>(&mut self, minions: &mut Arena<Box<dyn MinionTrait>>, elapsed: f32);
 
   fn fire(&mut self);
-  fn set_target(&mut self, entity: Entity);
-
-  fn dead(&self) -> bool;
+  fn set_target(&mut self, target_id: Index);
 }

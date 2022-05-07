@@ -1,17 +1,14 @@
-use amethyst::{core::transform::Transform, ecs::prelude::*};
+use crate::minion::MinionTrait;
+use crate::projectile::ProjectileTrait;
+use crate::shared_traits::*;
 
-use crate::minion::Minion;
-use crate::projectile::Projectile;
+use generational_arena::Arena;
 
-pub trait TowerTrait: Send + Sync {
+pub trait TowerTrait: DrawableTrait + MortalTrait {
   fn update<'a>(
     &mut self,
-    entities: &Entities<'a>,
-    tower_transform: &Transform,
-    minions: &ReadStorage<'a, Minion>,
-    transforms: &ReadStorage<'a, Transform>,
-    projectiles: &mut WriteStorage<'a, Projectile>,
-    updater: &Read<'a, LazyUpdate>,
+    minions: &mut Arena<Box<dyn MinionTrait>>,
+    projectiles: &mut Arena<Box<dyn ProjectileTrait>>,
     elapsed: f32,
   );
 }

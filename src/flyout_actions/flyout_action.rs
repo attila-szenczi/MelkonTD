@@ -1,5 +1,4 @@
 use crate::animation::LinearScalePositionTransition;
-use crate::shared_traits::*;
 
 use crate::world::World;
 

@@ -17,7 +17,7 @@ use sfml::system::Vector2f;
 enum PulsingState {
   Increase,
   Decrease,
-  Dieing, //Target lost
+  Collapse, //Target lost
 }
 
 pub struct PulsingElectricBall {
@@ -147,7 +147,7 @@ impl ProjectileTrait for PulsingElectricBall {
       } else {
         let direction = self.last_direction.unwrap();
         self.update_projectile_position(&direction, elapsed);
-        self.pulsing_state = PulsingState::Dieing;
+        self.pulsing_state = PulsingState::Collapse;
         if self.scale.x < 0.01 {
           self.dead = true;
         }

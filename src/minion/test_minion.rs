@@ -1,5 +1,3 @@
-//use amethyst::ecs::{Component, DenseVecStorage};
-
 use super::minion_trait::MinionTrait;
 
 use crate::shared_traits::*;
@@ -23,10 +21,6 @@ impl TestMinion {
     }
   }
 }
-
-// impl Component for TestMinion {
-//   type Storage = DenseVecStorage<Self>;
-// }
 
 impl MinionTrait for TestMinion {
   fn hit(&mut self, damage: i32) {

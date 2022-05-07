@@ -1,5 +1,5 @@
 use sfml::graphics::{
-  blend_mode::BlendMode, Color, IntRect, RenderTarget, RenderWindow, Sprite, Transformable,
+  Color, RenderTarget, RenderWindow, Sprite, Transformable,
 };
 use sfml::system::Vector2f;
 

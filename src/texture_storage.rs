@@ -1,16 +1,9 @@
 use std::collections::HashMap;
-use std::ops::Deref;
 use std::path::PathBuf;
 
-use sfml::graphics::{IntRect, Sprite, Texture};
+use sfml::graphics::{IntRect, Texture};
 use sfml::system::{ Vector2f, Vector2u};
 use sfml::SfBox;
-
-// #[derive(Clone)]
-// pub struct SpriteRenderWithDefaultScale {
-//   pub sprite_render: SpriteRender,
-//   pub default_scale: Vector3<f32>,
-// }
 
 pub struct TextureData {
   pub texture: SfBox<Texture>,

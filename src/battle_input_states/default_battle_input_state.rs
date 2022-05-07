@@ -1,4 +1,3 @@
-use sfml::graphics::IntRect;
 use sfml::system::Vector2f;
 use sfml::window::mouse::Button;
 use sfml::window::Event;
@@ -6,9 +5,7 @@ use sfml::window::Event;
 use super::flyout_input_state::FlyoutInputState;
 use super::input_state_trait::*;
 
-use crate::animation::LinearScalePositionTransition;
 use crate::battle_input_states::*;
-use crate::flyout_actions::*;
 use crate::world::World;
 
 pub struct DefaultBattleInputState {}

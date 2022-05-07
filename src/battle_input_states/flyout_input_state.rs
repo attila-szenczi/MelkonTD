@@ -5,7 +5,6 @@ use sfml::window::Event;
 use super::input_state_trait::*;
 
 use crate::animation::LinearScalePositionTransition;
-use crate::battle_input_states::*;
 use crate::flyout_actions::*;
 use crate::world::World;
 

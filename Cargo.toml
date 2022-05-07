@@ -2,7 +2,7 @@
 name = "melkon_td"
 version = "0.1.0"
 authors = ["Attila Szenczi <szenczi.attila90@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 if_chain = "1.0.0"

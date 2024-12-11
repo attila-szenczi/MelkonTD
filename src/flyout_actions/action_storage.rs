@@ -14,6 +14,15 @@ pub struct ActionWithImage {
 
 // Available associated build/upgrade/skill actions prefilled on level load, eg.: In earlier levels some upgrades might be locked.
 // Or some options become available mid level
+// TODO: ActionWithImage is probably unneeded in this form.
+// The callback could be an enum which is dispatched in a static function
+// So Actions passed to FlyoutState contains: 
+// - ImageName
+// - Enum of the function
+// - Position: optional? Only needed for spellcasts
+// - Triggering EntityIndex: dispatchedFunction will take the index of the right container
+// ActionStorage should function as a customization tool per map
+// It maps types to AvailableActions, it contains ImageName + Enum
 pub struct ActionStorage {
   actions: HashMap<i32, Vec<ActionWithImage>>,
 }

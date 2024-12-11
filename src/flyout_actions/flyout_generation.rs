@@ -21,6 +21,7 @@ pub fn generate_flyouts(active_flyout_actions: &mut Vec<Box<FlyoutAction>>, acti
       actions[i].image_name.clone(),
       64, //TODO: Get it from texturemap
       64,
+      0, // TODO: Pass from up once entity types has associated source_ids
       i as i32,
     ));
 

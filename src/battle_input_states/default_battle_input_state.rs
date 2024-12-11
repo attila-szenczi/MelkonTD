@@ -42,7 +42,7 @@ impl InputStateTrait for DefaultBattleInputState {
                                 );
 
                                 let mut actions = Vec::new(); //world.action_storage;
-                                
+
                                 // TODO: Move to map loading
                                 actions.push(ActionWithImage {
                                     action_index: 0,
@@ -50,16 +50,16 @@ impl InputStateTrait for DefaultBattleInputState {
                                 });
                                 // TODO: Move to map loading
                                 actions.push(ActionWithImage {
-                                  action_index: 1,
-                                  image_name: "locked_icon".to_string(),
-                              });
-                              // TODO: Move to map loading
-                              actions.push(ActionWithImage {
-                                action_index: 0,
-                                image_name: "locked_icon".to_string(),
-                            });
+                                    action_index: 1,
+                                    image_name: "locked_icon".to_string(),
+                                });
+                                // TODO: Move to map loading
+                                actions.push(ActionWithImage {
+                                    action_index: 1,
+                                    image_name: "locked_icon".to_string(),
+                                });
                                 //TODO:
-                                //ActionStorage (filled during load) store id -> list of actions. Generating the flyouts
+                                //ActionStorage (filled during load) store type_id -> list of actions. Generating the flyouts
                                 //FlyoutState only care about the input handling
                                 //Maybe clickableObject should handle those things as flyout is not the only thing that can happen.
                                 return Transition::PushState(Box::new(FlyoutInputState::new(

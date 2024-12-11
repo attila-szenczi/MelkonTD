@@ -28,7 +28,7 @@ impl TextureStorage {
     }
   }
 
-  pub fn insert_with_key(&mut self, key: &str, filepath: &str) {
+  pub fn insert_with_key(&mut self, key: &str, filepath: &str, default_width: i32,) {
     let mut path = self.working_dir.clone();
     path.push(filepath);
     let mut texture = Texture::from_file(path.to_str().unwrap()).unwrap();
@@ -39,12 +39,13 @@ impl TextureStorage {
     let sprite_height = texture.size().y as i32;
     let origin = Vector2f::new((sprite_width / 2) as f32, (sprite_height / 2) as f32);
 
+    let scale = default_width as f32 / texture.size().x as f32;
     self.textures.insert(
       String::from(key),
       TextureData {
         texture: texture,
         sprite_rects: vec![],
-        scale: 1., //TODO: If it will be used outside of background it might not be good
+        scale,
         origin,
         default_width: sprite_width,
       },

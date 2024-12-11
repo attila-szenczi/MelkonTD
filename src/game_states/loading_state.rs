@@ -21,7 +21,10 @@ impl LoadingState {
 impl<'b> GameState for LoadingState {
   fn run(&mut self, window: &mut RenderWindow, world: &mut World) -> Transition {
     let textures = &mut world.texture_storage;
-    textures.insert_with_key("background", "private_sprites/game_background_1.png");
+
+    //TODO: swap keys to enums
+    //TODO: swap every static asset to insert_with_key
+    textures.insert_with_key("background", "private_sprites/game_background_1.png", 1920);
     textures.insert("private_sprites/5_enemies_1_attack_018.png", 146);
     textures.insert("sprites/healthbar_back.png", 32);
     textures.insert("sprites/healthbar_front.png", 32);
@@ -30,8 +33,8 @@ impl<'b> GameState for LoadingState {
     textures.insert("private_sprites/healthbar_green.png", 118);
     textures.insert("private_sprites/healthbar_red.png", 118);
     textures.insert_sprite_sheet("private_sprites/pulsing_electric_ball.png", 64, 4, 2);
-    textures.insert("sprites/electric_mage_tower_icon.png", 24);
-    textures.insert("sprites/locked_icon.png", 64);
+    textures.insert_with_key("electric_mage_tower_icon", "sprites/electric_mage_tower_icon.png", 64);
+    textures.insert_with_key("locked_icon", "sprites/locked_icon.png", 64);
 
     let mage_tower = Box::new(ElectricMageTower::new(Vector2f::new(160., 950.)));
     world.towers.insert(mage_tower);

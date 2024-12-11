@@ -5,12 +5,14 @@ use crate::world::World;
 use sfml::graphics::IntRect;
 use sfml::system::Vector2f;
 
+
 pub struct FlyoutAction {
   transition: LinearScalePositionTransition,
   image_name: String,
   full_width: i32,
   pub rect: IntRect,
   full_height: i32,
+  action_index: i32,
 }
 
 impl FlyoutAction {
@@ -19,6 +21,7 @@ impl FlyoutAction {
     image_name: String,
     full_width: i32,
     full_height: i32,
+    action_index: i32,
   ) -> Self {
     FlyoutAction {
       transition,
@@ -26,6 +29,7 @@ impl FlyoutAction {
       full_width,
       full_height,
       rect: IntRect::new(0, 0, 0, 0),
+      action_index,
     }
   }
 

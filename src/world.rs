@@ -8,7 +8,9 @@ use crate::tower::TowerTrait;
 use generational_arena::Arena;
 
 pub struct World {
+  //TODO: Separate storages from world?
   pub texture_storage: TextureStorage,
+  pub action_storage: ActionStorage,
   pub minions: Arena<Box<dyn MinionTrait>>,
   pub towers: Arena<Box<dyn TowerTrait>>,
   pub projectiles: Arena<Box<dyn ProjectileTrait>>,
@@ -21,6 +23,7 @@ impl World {
   pub fn new() -> Self {
     World {
       texture_storage: TextureStorage::new(),
+      action_storage: ActionStorage::new(),
       minions: Arena::new(),
       towers: Arena::new(),
       projectiles: Arena::new(),
